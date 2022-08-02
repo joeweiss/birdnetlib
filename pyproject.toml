@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "birdnetlib"
+version = "0.0.1"
+authors = [
+  { name="Joe Weiss", email="joe.weiss@gmail.com" },
+]
+description = "A python api for BirdNET-Lite and BirdNET-Analyzer"
+readme = "README.md"
+license = "GPL-3.0"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/joeweiss/birdnetlib"
+"Bug Tracker" = "https://github.com/joeweiss/birdnetlib/issues"
