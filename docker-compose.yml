@@ -1,0 +1,8 @@
+version: "3"
+services:
+  main:
+    build: .
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/birdnetlib

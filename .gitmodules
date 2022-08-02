@@ -1,0 +1,6 @@
+[submodule "tests/BirdNET-Analyzer"]
+	path = tests/BirdNET-Analyzer
+	url = https://github.com/kahst/BirdNET-Analyzer
+[submodule "tests/BirdNET-Lite"]
+	path = tests/BirdNET-Lite
+	url = https://github.com/kahst/BirdNET-Lite
