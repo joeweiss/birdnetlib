@@ -131,4 +131,4 @@ dmypy.json
 .python-version
 
 .autoenv
-
+.DS_Store
