@@ -68,10 +68,10 @@ def test_basic():
     assert len(commandline_results) == 6
 
     assert recording.detections[0]["common_name"] == "House Wren"
-    assert pytest.approx(recording.detections[0]["confidence"]) == 0.27517712
+    assert pytest.approx(recording.detections[0]["confidence"], 0.01) == 0.27517712
 
     assert commandline_results[0]["common_name"] == "House Wren"
-    assert pytest.approx(commandline_results[0]["confidence"]) == 0.27517712
+    assert pytest.approx(commandline_results[0]["confidence"], 0.01) == 0.27517712
 
 
 def test_with_custom_list():
@@ -134,7 +134,7 @@ def test_with_custom_list():
     assert len(commandline_results) == 1
 
     assert recording.detections[0]["common_name"] == "Spotted Towhee"
-    assert pytest.approx(recording.detections[0]["confidence"]) == 0.55690277
+    assert pytest.approx(recording.detections[0]["confidence"], 0.01) == 0.55690277
 
     assert commandline_results[0]["common_name"] == "Spotted Towhee"
-    assert pytest.approx(commandline_results[0]["confidence"]) == 0.55690277
+    assert pytest.approx(commandline_results[0]["confidence"], 0.01) == 0.55690277
