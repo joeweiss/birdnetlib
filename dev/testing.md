@@ -1,17 +1,19 @@
 # Tests
 
-Tests require installing the git submodules.
-
-```
-# After cloning the repo.
-cd birdnetlib
-git submodule update --init
+## M1 Mac using Docker
 
 ```
 
-# Ubuntu 22
+docker-compose build
+docker-compose up -d
+docker-compose exec main pip install -r dev/docker-m1-requirements.txt
+docker-compose exec main pytest
 
-Note: tensorflow does not build on ec2 micro instance (at least as of Aug 2022)
+```
+
+## Ubuntu 22
+
+Note: tensorflow does not install without intervention on ec2 micro instance (at least as of Aug 2022)
 
 ```
 
