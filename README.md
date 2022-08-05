@@ -4,13 +4,21 @@
 
 A python api for BirdNET-Lite and BirdNET-Analyzer
 
+## Installation
+
+`birdnetlib` requires Python 3.7+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
+
+```
+pip install birdnetlib
+```
+
 ## Documentation
 
 `birdnetlib` provides a common interface for BirdNET-Lite and BirdNET-Analyzer.
 
 ### Using BirdNET-Lite
 
-To use the BirdNET-Analyzer model, use the `LiteAnalyzer` class.
+To use the BirdNET-Lite model, use the `LiteAnalyzer` class.
 
 ```
 from birdnetlib import Recording
@@ -69,14 +77,6 @@ recording.detect()
 print(recording.detections)
 ```
 
-## Installation
-
-`birdnetlib` requires Python 3.7+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
-
-```
-pip install birdnetlib
-```
-
 ## About BirdNET-Lite and BirdNET-Analyzer
 
 `birdnetlib` uses models provided by BirdNET-Lite and BirdNET-Analyzer under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
@@ -86,6 +86,7 @@ BirdNET-Lite and BirdNET-Analyzer were developed by the [K. Lisa Yang Center for
 For more information on BirdNET analyzers, please see the project repositories below:
 
 [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer)
+
 [BirdNET-Lite](https://github.com/kahst/BirdNET-Lite)
 
 `birdnetlib` is not associated with BirdNET-Lite, BirdNET-Analyzer or the K. Lisa Yang Center for Conservation Bioacoustics.
