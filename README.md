@@ -35,7 +35,7 @@ recording = Recording(
     week=18,
     min_conf=0.25,
 )
-recording.detect()
+recording.analyze()
 print(recording.detections) # Returns list of detections.
 ```
 
@@ -73,7 +73,7 @@ recording = Recording(
     week=18,
     min_conf=0.25,
 )
-recording.detect()
+recording.analyze()
 print(recording.detections)
 ```
 

@@ -60,7 +60,7 @@ def test_without_species_list():
         week=week,
         min_conf=min_conf,
     )
-    recording.detect()
+    recording.analyze()
     pprint(recording.detections)
 
     assert len(recording.detections) == 8
@@ -120,7 +120,7 @@ def test_with_species_list():
         week=week,
         min_conf=min_conf,
     )
-    recording.detect()
+    recording.analyze()
     pprint(recording.detections)
 
     assert (
@@ -146,7 +146,7 @@ def test_with_species_list():
             week=week,
             min_conf=min_conf,
         )
-        recording.detect()
+        recording.analyze()
 
 
 def test_species_list_calls():
@@ -173,7 +173,7 @@ def test_species_list_calls():
             week=week,
             min_conf=min_conf,
         )
-        recording.detect()
+        recording.analyze()
         assert wrapped_return_predicted_species_list.call_count == 1
 
         # Second recording with the same position/time should not regerate the species list.
@@ -185,7 +185,7 @@ def test_species_list_calls():
             week=week,
             min_conf=min_conf,
         )
-        recording.detect()
+        recording.analyze()
         assert wrapped_return_predicted_species_list.call_count == 1
 
 

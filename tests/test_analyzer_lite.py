@@ -60,7 +60,7 @@ def test_basic():
         week=week,
         min_conf=min_conf,
     )
-    recording.detect()
+    recording.analyze()
 
     # pprint(recording.detections)
 
@@ -126,7 +126,7 @@ def test_with_custom_list():
         week=week,
         min_conf=min_conf,
     )
-    recording.detect()
+    recording.analyze()
 
     pprint(recording.detections)
 
