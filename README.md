@@ -94,7 +94,7 @@ For more information on BirdNET analyzers, please see the project repositories b
 
 ## About `birdnetlib`
 
-`birdnetlib` is created and maintained by Joe Weiss.
+`birdnetlib` is maintained by Joe Weiss.
 
 ### Project Goals
 
