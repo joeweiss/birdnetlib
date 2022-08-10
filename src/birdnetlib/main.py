@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
-from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeError
+from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
+import warnings
 import audioread
 
 class Recording:
@@ -28,8 +29,9 @@ class Recording:
     @property
     def detections(self):
         if not self.analyzed:
-            raise AnalyzerRuntimeError(
-                "'analyze' method has not been called. Call .analyze() before accessing detections."
+            warnings.warn(
+                "'analyze' method has not been called. Call .analyze() before accessing detections.",
+                AnalyzerRuntimeWarning,
             )
         qualified_detections = []
         allow_list = self.analyzer.custom_species_list

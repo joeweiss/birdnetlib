@@ -4,7 +4,7 @@ from birdnetlib.analyzer_lite import LiteAnalyzer
 import os
 import pytest
 
-from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeError
+from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
 
 
 def test_analyzer_exceptions():
@@ -57,10 +57,5 @@ def test_detections_before_analyze_call():
     input_path = os.path.join(os.path.dirname(__file__), "test_files/audio.mp3")
     recording = Recording(analyzer, input_path)
 
-    with pytest.raises(AnalyzerRuntimeError) as excinfo:
+    with pytest.warns(AnalyzerRuntimeWarning):
         print(recording.detections)
-
-    assert (
-        str(excinfo.value)
-        == "'analyze' method has not been called. Call .analyze() before accessing detections."
-    )

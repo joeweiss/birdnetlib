@@ -2,5 +2,5 @@ class AudioFormatError(Exception):
     pass
 
 
-class AnalyzerRuntimeError(Exception):
+class AnalyzerRuntimeWarning(Warning):
     pass
