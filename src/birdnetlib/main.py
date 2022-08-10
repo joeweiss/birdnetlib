@@ -1,6 +1,7 @@
 import librosa
 import numpy as np
-
+from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeError
+import audioread
 
 class Recording:
     def __init__(
@@ -10,6 +11,7 @@ class Recording:
         self.analyzer = analyzer
         self.detections_dict = {}  # Old format
         self.detection_list = []
+        self.analyzed = False
 
         self.week = max(1, min(week, 48))
         self.sensitivity = max(0.5, min(1.0 - (sensitivity - 1.0), 1.5))
@@ -19,13 +21,16 @@ class Recording:
         self.minimum_confidence = max(0.01, min(min_conf, 0.99))
         self.sample_secs = 3.0
 
-        self.read_audio_data()
-
     def analyze(self):
+        self.read_audio_data()
         self.analyzer.analyze_recording(self)
 
     @property
     def detections(self):
+        if not self.analyzed:
+            raise AnalyzerRuntimeError(
+                "'analyze' method has not been called. Call .analyze() before accessing detections."
+            )
         qualified_detections = []
         allow_list = self.analyzer.custom_species_list
         for d in self.detection_list:
@@ -43,9 +48,13 @@ class Recording:
         print("READING AUDIO DATA...", end=" ", flush=True)
 
         # Open file with librosa (uses ffmpeg or libav)
-        sig, rate = librosa.load(
-            self.path, sr=sample_rate, mono=True, res_type="kaiser_fast"
-        )
+        try:
+            sig, rate = librosa.load(
+                self.path, sr=sample_rate, mono=True, res_type="kaiser_fast"
+            )
+        except audioread.exceptions.NoBackendError as e:
+            print(e)
+            raise AudioFormatError("Audio format could not be opened.")
 
         # Split audio into 3-second chunks
 

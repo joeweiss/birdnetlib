@@ -13,6 +13,7 @@ except:
 import numpy as np
 import operator
 
+from birdnetlib.exceptions import AudioFormatError
 
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
