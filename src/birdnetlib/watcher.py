@@ -5,12 +5,11 @@ from birdnetlib.exceptions import AudioFormatError
 
 from birdnetlib import Recording
 
-
 class DirectoryWatcher:
     def __init__(
         self,
-        analyzer,
         directory,
+        analyzer=None,
         week=-1,
         sensitivity=1.0,
         lat=None,
@@ -18,7 +17,12 @@ class DirectoryWatcher:
         min_conf=0.1,
     ):
         self.directory = directory
-        self.analyzer = analyzer  # TODO; Add a check that the analyzer has been initialized already.
+        if analyzer:
+            self.analyzer = analyzer  # TODO; Add a check that the analyzer has been initialized already.
+        else:
+            from birdnetlib.analyzer_lite import LiteAnalyzer
+
+            self.analyzer = LiteAnalyzer()
 
         # Configuration values for Recording object.
         # Do not norm these values here; let Recording handle them.
