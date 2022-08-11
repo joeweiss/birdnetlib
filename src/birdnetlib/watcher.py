@@ -1,6 +1,7 @@
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 import time
+from birdnetlib.exceptions import AudioFormatError
 
 from birdnetlib import Recording
 
@@ -28,26 +29,30 @@ class DirectoryWatcher:
         self.min_conf = min_conf
 
     def on_analyze_complete(self, recording):
-        return recording
-
-    def on_error(self):
         pass
+
+    def on_error(self, recording, exception):
+        # If not overridden, raise the exception.
+        raise exception
 
     def _on_created(self, event):
         # Detect for this file.
         print(f"New file created: {event.src_path}")
 
-        recording = Recording(
-            self.analyzer,
-            event.src_path,
-            week=self.week,
-            sensitivity=self.sensitivity,
-            lat=self.lat,
-            lon=self.lon,
-            min_conf=self.min_conf,
-        )
-        recording.analyze()
-        self.on_analyze_complete(recording)
+        try:
+            recording = Recording(
+                self.analyzer,
+                event.src_path,
+                week=self.week,
+                sensitivity=self.sensitivity,
+                lat=self.lat,
+                lon=self.lon,
+                min_conf=self.min_conf,
+            )
+            recording.analyze()
+            self.on_analyze_complete(recording)
+        except BaseException as error:
+            self.on_error(recording, error)
 
     def watch(self):
         patterns = ["*.mp3", "*.wav"]
