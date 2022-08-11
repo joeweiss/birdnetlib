@@ -1,22 +1,19 @@
 from birdnetlib.watcher import DirectoryWatcher
-from birdnetlib.analyzer import Analyzer
+from birdnetlib.analyzer_lite import LiteAnalyzer
 from pprint import pprint
-import shutil
-import random
-import time
 
 
 def on_analyze_complete(recording):
     print(recording.path)
     pprint(recording.detections)
-    time.sleep(0.1)
-    shutil.copyfile(recording.path, f"./examples/{random.randint(0,2000)}.mp3")
 
 
 print("Starting Analyzer")
-analyzer = Analyzer()
+analyzer = LiteAnalyzer()
 
-
-watcher = DirectoryWatcher(analyzer, ".")
+print("Starting Watcher")
+watcher = DirectoryWatcher(
+    analyzer, ".", lon=-120.7463, lat=35.4244, week=18, min_conf=0.4
+)
 watcher.on_analyze_complete = on_analyze_complete
 watcher.watch()

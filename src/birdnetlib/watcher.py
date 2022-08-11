@@ -6,11 +6,26 @@ from birdnetlib import Recording
 
 
 class DirectoryWatcher:
-    def __init__(self, analyzer, directory):
+    def __init__(
+        self,
+        analyzer,
+        directory,
+        week=-1,
+        sensitivity=1.0,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
+    ):
         self.directory = directory
-        self.analyzer = analyzer
-        # Init the analyzer
-        pass
+        self.analyzer = analyzer  # TODO; Add a check that the analyzer has been initialized already.
+
+        # Configuration values for Recording object.
+        # Do not norm these values here; let Recording handle them.
+        self.week = week
+        self.sensitivity = sensitivity
+        self.lat = lat
+        self.lon = lon
+        self.min_conf = min_conf
 
     def on_analyze_complete(self, recording):
         return recording
@@ -20,11 +35,16 @@ class DirectoryWatcher:
 
     def _on_created(self, event):
         # Detect for this file.
-        print(f"hey, {event.src_path} has been created!")
-        minimum_confidence = 0.7
+        print(f"New file created: {event.src_path}")
 
         recording = Recording(
-            self.analyzer, event.src_path, min_conf=minimum_confidence
+            self.analyzer,
+            event.src_path,
+            week=self.week,
+            sensitivity=self.sensitivity,
+            lat=self.lat,
+            lon=self.lon,
+            min_conf=self.min_conf,
         )
         recording.analyze()
         self.on_analyze_complete(recording)
