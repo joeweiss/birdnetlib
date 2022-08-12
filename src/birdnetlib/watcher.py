@@ -18,10 +18,9 @@ class DirectoryWatcher:
     ):
         self.directory = directory
         if analyzer:
-            self.analyzer = analyzer  # TODO; Add a check that the analyzer has been initialized already.
+            self.analyzer = analyzer
         else:
             from birdnetlib.analyzer_lite import LiteAnalyzer
-
             self.analyzer = LiteAnalyzer()
 
         # Configuration values for Recording object.
