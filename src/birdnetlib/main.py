@@ -25,6 +25,7 @@ class Recording:
     def analyze(self):
         self.read_audio_data()
         self.analyzer.analyze_recording(self)
+        self.analyzed = True
 
     @property
     def detections(self):

@@ -78,6 +78,24 @@ recording.analyze()
 print(recording.detections)
 ```
 
+### Other common helper classes
+
+#### DirectoryWatcher
+
+`DirectoryWatcher` can watch a directory and analyze new files as they are created.
+
+```
+def on_analyze_complete(recording):
+    print(recording.path)
+    pprint(recording.detections)
+
+watcher = DirectoryWatcher("/Birds/mp3_dir")
+watcher.on_analyze_complete = on_analyze_complete
+watcher.watch()
+```
+
+See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
+
 ## About BirdNET-Lite and BirdNET-Analyzer
 
 `birdnetlib` uses models provided by BirdNET-Lite and BirdNET-Analyzer under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
