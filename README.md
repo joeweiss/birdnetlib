@@ -96,6 +96,29 @@ watcher.watch()
 
 See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
 
+#### DirectoryWatcherMultiAnalyzer
+
+`DirectoryWatcherMultiAnalyzer` can watch a directory and analyze new files as they are created, with multiple analyzer models.
+
+```
+def on_analyze_all_complete(recording_list):
+    for recording in recording_list:
+        print(recording.path, recording.analyzer.name)
+        pprint(recording.detections)
+
+analyzer_lite = LiteAnalyzer()
+analyzer = Analyzer()
+
+watcher = DirectoryWatcherMultiAnalyzer(
+    "/Birds/mp3_dir",
+    analyzers=[analyzer, analyzer_lite],
+)
+watcher.on_analyze_all_complete = on_analyze_all_complete
+watcher.watch()
+```
+
+See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_multi_analyzer.py) for analyzer options and error handling callbacks.
+
 ## About BirdNET-Lite and BirdNET-Analyzer
 
 `birdnetlib` uses models provided by BirdNET-Lite and BirdNET-Analyzer under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
