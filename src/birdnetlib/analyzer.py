@@ -52,6 +52,8 @@ class Detection:
 
 class Analyzer:
     def __init__(self, custom_species_list_path=None):
+        self.name = "Analyzer"
+        self.model_name = "BirdNET-Analyzer"
         self.interpreter = None
         self.input_details = None
         self.output_details = None

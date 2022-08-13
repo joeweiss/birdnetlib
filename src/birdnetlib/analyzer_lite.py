@@ -26,7 +26,8 @@ LABEL_PATH = os.path.join(os.path.dirname(__file__), "models/lite/labels.txt")
 
 class LiteAnalyzer:
     def __init__(self, custom_species_list_path=None):
-
+        self.name = "LiteAnalyzer"
+        self.model_name = "BirdNET-Lite"
         self.interpreter = None
         self.input_details = None
         self.output_details = None
