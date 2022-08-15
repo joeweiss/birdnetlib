@@ -15,7 +15,7 @@ def test_basic():
 
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     min_conf = 0.25
     input_path = os.path.join(
         os.path.dirname(__file__), "test_files/XC558716 - Soundscape.mp3"
@@ -27,7 +27,7 @@ def test_basic():
     # Process using python script as is.
     birdnet_lite_path = os.path.join(os.path.dirname(__file__), "BirdNET-Lite")
 
-    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week} --min_conf {min_conf}"
+    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf}"
     os.system(f"cd {birdnet_lite_path}; {cmd}")
 
     with open(tf.name) as f:
@@ -57,7 +57,7 @@ def test_basic():
         input_path,
         lat=lat,
         lon=lon,
-        week=week,
+        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()
@@ -78,7 +78,7 @@ def test_with_custom_list():
 
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     min_conf = 0.25
     input_path = os.path.join(
         os.path.dirname(__file__), "test_files/XC558716 - Soundscape.mp3"
@@ -93,7 +93,7 @@ def test_with_custom_list():
     # Process using python script as is.
     birdnet_lite_path = os.path.join(os.path.dirname(__file__), "BirdNET-Lite")
 
-    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week} --min_conf {min_conf} --custom_list {custom_list_path}"
+    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf} --custom_list {custom_list_path}"
     os.system(f"cd {birdnet_lite_path}; {cmd}")
 
     with open(tf.name) as f:
@@ -123,7 +123,7 @@ def test_with_custom_list():
         input_path,
         lat=lat,
         lon=lon,
-        week=week,
+        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()

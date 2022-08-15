@@ -1,6 +1,7 @@
 from birdnetlib.watcher import DirectoryWatcherMultiAnalyzer
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from birdnetlib.analyzer import Analyzer
+from datetime import datetime
 from pprint import pprint
 
 
@@ -39,7 +40,7 @@ watcher = DirectoryWatcherMultiAnalyzer(
     analyzers=[analyzer, analyzer_lite],
     lon=-120.7463,
     lat=35.4244,
-    week=18,
+    date=datetime(year=2022, month=5, day=10),
     min_conf=0.4,
 )
 
