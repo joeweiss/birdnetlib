@@ -132,7 +132,7 @@ class Analyzer:
         self,
         longitude=None,
         latitude=None,
-        week=None,
+        week_48=None,
         filter_threshold=LOCATION_FILTER_THRESHOLD,
     ):
 
@@ -140,7 +140,7 @@ class Analyzer:
 
         sample = np.expand_dims(
             np.array(
-                [latitude, longitude, week],
+                [latitude, longitude, week_48],
                 dtype="float32",
             ),
             0,
@@ -172,7 +172,9 @@ class Analyzer:
         print("set_predicted_species_list_from_position")
 
         # Check to see if this species list has been previously cached.
-        list_key = f"list-{recording.longitude}-{recording.latitude}-{recording.week}"
+        list_key = (
+            f"list-{recording.longitude}-{recording.latitude}-{recording.week_48}"
+        )
 
         if list_key in self.cached_species_lists:
             self.custom_species_list = self.cached_species_lists[list_key]
@@ -181,7 +183,7 @@ class Analyzer:
         species_list = self.return_predicted_species_list(
             longitude=recording.longitude,
             latitude=recording.latitude,
-            week=recording.week,
+            week_48=recording.week_48,
         )
         self.custom_species_list = species_list
 

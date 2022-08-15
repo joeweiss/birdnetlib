@@ -15,7 +15,7 @@ def test_without_species_list():
 
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     min_conf = 0.25
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
 
@@ -25,7 +25,7 @@ def test_without_species_list():
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
 
-    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week} --min_conf {min_conf} --rtype=csv"
+    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf} --rtype=csv"
     print(cmd)
     os.system(f"cd {birdnet_analyzer_path}; {cmd}")
 
@@ -57,7 +57,7 @@ def test_without_species_list():
         input_path,
         lat=lat,
         lon=lon,
-        week=week,
+        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()
@@ -75,7 +75,7 @@ def test_with_species_list():
 
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     min_conf = 0.25
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
     custom_list_path = os.path.join(
@@ -117,7 +117,7 @@ def test_with_species_list():
     recording = Recording(
         analyzer,
         input_path,
-        week=week,
+        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()
@@ -143,7 +143,7 @@ def test_with_species_list():
             input_path,
             lon=lon,
             lat=lat,
-            week=week,
+            week_48=week_48,
             min_conf=min_conf,
         )
         recording.analyze()
@@ -153,7 +153,7 @@ def test_species_list_calls():
 
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     min_conf = 0.25
     analyzer = Analyzer()
 
@@ -170,7 +170,7 @@ def test_species_list_calls():
             input_path,
             lon=lon,
             lat=lat,
-            week=week,
+            week_48=week_48,
             min_conf=min_conf,
         )
         recording.analyze()
@@ -182,7 +182,7 @@ def test_species_list_calls():
             input_path,
             lon=lon,
             lat=lat,
-            week=week,
+            week_48=week_48,
             min_conf=min_conf,
         )
         recording.analyze()
@@ -192,11 +192,11 @@ def test_species_list_calls():
 def test_species_list_creation():
     lon = -120.7463
     lat = 35.4244
-    week = 18
+    week_48 = 18
     filter_threshold = 0.03
 
     analyzer = Analyzer()
     species_list = analyzer.return_predicted_species_list(
-        longitude=lon, latitude=lat, week=week, filter_threshold=filter_threshold
+        longitude=lon, latitude=lat, week_48=week_48, filter_threshold=filter_threshold
     )
     assert len(species_list) == 152

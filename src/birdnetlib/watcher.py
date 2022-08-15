@@ -10,7 +10,8 @@ class DirectoryWatcher:
         self,
         directory,
         analyzer=None,
-        week=-1,
+        week_48=-1,
+        date=None,
         sensitivity=1.0,
         lat=None,
         lon=None,
@@ -25,7 +26,8 @@ class DirectoryWatcher:
 
         # Configuration values for Recording object.
         # Do not norm these values here; let Recording handle them.
-        self.week = week
+        self.week_48 = week_48
+        self.date = date
         self.sensitivity = sensitivity
         self.lat = lat
         self.lon = lon
@@ -46,7 +48,8 @@ class DirectoryWatcher:
             recording = Recording(
                 self.analyzer,
                 event.src_path,
-                week=self.week,
+                week_48=self.week_48,
+                date=self.date,
                 sensitivity=self.sensitivity,
                 lat=self.lat,
                 lon=self.lon,
@@ -84,7 +87,8 @@ class DirectoryWatcherMultiAnalyzer:
         self,
         directory,
         analyzers=[],
-        week=-1,
+        week_48=-1,
+        date=None,
         sensitivity=1.0,
         lat=None,
         lon=None,
@@ -100,7 +104,8 @@ class DirectoryWatcherMultiAnalyzer:
 
         # Configuration values for Recording object.
         # Do not norm these values here; let Recording handle them.
-        self.week = week
+        self.week_48 = week_48
+        self.date = date
         self.sensitivity = sensitivity
         self.lat = lat
         self.lon = lon
@@ -125,7 +130,7 @@ class DirectoryWatcherMultiAnalyzer:
                 recording = Recording(
                     analyzer,
                     event.src_path,
-                    week=self.week,
+                    week_48=self.week_48,
                     sensitivity=self.sensitivity,
                     lat=self.lat,
                     lon=self.lon,

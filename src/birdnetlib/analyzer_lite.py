@@ -78,7 +78,7 @@ class LiteAnalyzer:
 
     def convertMetadata(self, m):
 
-        # Convert week to cosine
+        # Convert week_48 to cosine
         if m[2] >= 1 and m[2] <= 48:
             m[2] = math.cos(math.radians(m[2] * 7.5)) + 1
         else:
@@ -133,7 +133,7 @@ class LiteAnalyzer:
         # Convert and prepare metadata
         lat = recording.latitude or -1  # lite uses -1 for none here.
         lon = recording.longitude or -1  # lite uses -1 for none here.
-        mdata = self.convertMetadata(np.array([lat, lon, recording.week]))
+        mdata = self.convertMetadata(np.array([lat, lon, recording.week_48]))
         mdata = np.expand_dims(mdata, 0)
 
         # Parse every chunk

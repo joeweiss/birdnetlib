@@ -3,10 +3,20 @@ import numpy as np
 from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
 import warnings
 import audioread
+import calendar
+import math
 
 class Recording:
     def __init__(
-        self, analyzer, path, week=-1, sensitivity=1.0, lat=None, lon=None, min_conf=0.1
+        self,
+        analyzer,
+        path,
+        week_48=-1,
+        date=None,
+        sensitivity=1.0,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
     ):
         self.path = path
         self.analyzer = analyzer
@@ -14,7 +24,21 @@ class Recording:
         self.detection_list = []
         self.analyzed = False
 
-        self.week = max(1, min(week, 48))
+
+        # Deal with dates, and week_48.
+        # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
+        if week_48 == -1:
+            self.week_48 = -1
+        else:
+            self.week_48 = max(1, min(week_48, 48))
+
+        if date:
+            # Convert date to week_48 format for the Analyzer models.
+            self.date = date
+            day_of_year = date.timetuple().tm_yday
+            days_in_year = 366 if calendar.isleap(date.year) else 365
+            self.week_48 = math.ceil((day_of_year / days_in_year) * 48)
+
         self.sensitivity = max(0.5, min(1.0 - (sensitivity - 1.0), 1.5))
         self.latitude = lat
         self.longitude = lon
