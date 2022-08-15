@@ -22,7 +22,7 @@ print("Starting Watcher")
 directory = "."
 watcher = DirectoryWatcher(
     directory,
-    analyzer=analyzer,
+    analyzers=[analyzer],
     lon=-120.7463,
     lat=35.4244,
     date=datetime(year=2022, month=5, day=10),

@@ -12,7 +12,7 @@ def on_analyze_complete(recording):
 def test_watcher_complete():
     analyzer = LiteAnalyzer()
     directory = "."
-    watcher = DirectoryWatcher(directory, analyzer=analyzer)
+    watcher = DirectoryWatcher(directory, analyzers=[analyzer])
 
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
 
@@ -34,7 +34,7 @@ def test_watcher_complete():
 def test_watcher_error():
     analyzer = LiteAnalyzer()
     directory = "."
-    watcher = DirectoryWatcher(directory, analyzer=analyzer)
+    watcher = DirectoryWatcher(directory, analyzers=[analyzer])
 
     # Not an mp3 file, should throw error.
     input_path = os.path.join(os.path.dirname(__file__), "test_files/species_list.txt")
@@ -61,4 +61,4 @@ def test_default_analyzer():
 
     directory = "."
     watcher = DirectoryWatcher(directory)
-    assert type(watcher.analyzer).__name__ == "LiteAnalyzer"
+    assert type(watcher.analyzers[0]).__name__ == "LiteAnalyzer"

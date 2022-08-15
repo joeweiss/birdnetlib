@@ -98,9 +98,7 @@ watcher.watch()
 
 See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
 
-#### DirectoryWatcherMultiAnalyzer
-
-`DirectoryWatcherMultiAnalyzer` can watch a directory and analyze new files as they are created, with multiple analyzer models.
+`DirectoryWatcher` can also watch a directory and analyze new files as they are created, with **multiple** analyzer models.
 
 ```
 def on_analyze_all_complete(recording_list):
@@ -111,7 +109,7 @@ def on_analyze_all_complete(recording_list):
 analyzer_lite = LiteAnalyzer()
 analyzer = Analyzer()
 
-watcher = DirectoryWatcherMultiAnalyzer(
+watcher = DirectoryWatcher(
     "/Birds/mp3_dir",
     analyzers=[analyzer, analyzer_lite],
 )
