@@ -3,6 +3,7 @@ from birdnetlib.analyzer_lite import LiteAnalyzer
 import os
 from collections import namedtuple
 from mock import patch, Mock
+from datetime import datetime
 
 
 def on_analyze_complete(recording):
@@ -29,6 +30,52 @@ def test_watcher_complete():
     assert watcher.on_analyze_complete.call_count == 1
     detections = watcher.on_analyze_complete.call_args.args[0].detections
     assert len(detections) == 2
+
+
+def preparser(filepath):
+    # Returns a dictionary of values that are applied to the recording before processing.
+    filename = filepath.split("/")[-1]
+    # 2022-08-15-birdnet-21:05:51.wav, as an example, use BirdNET-Pi's preferred format
+    dt = datetime.strptime(filename, "%Y-%m-%d-birdnet-%H:%M:%S.wav")
+    # Note, you don't have to return all of the possible values here (lat, lon, date).
+    # The code will handle just returning whatever needs to be changed on the recording object pre-parsing.
+    lon = -120
+    lat = 35
+    return {"date": dt, "lon": lon, "lat": lat}
+
+
+def test_watcher_date_preparser_parser():
+    # Test the ability for the parser to preparse for lon/lat/date.
+    analyzer = LiteAnalyzer()
+    directory = "."
+    watcher = DirectoryWatcher(directory, analyzers=[analyzer])
+
+    input_path = os.path.join(
+        os.path.dirname(__file__), "test_files/2022-08-15-birdnet-21:05:51.wav"
+    )
+
+    watcher.recording_metadata_preparser = preparser
+
+    # Add a mocked call for on_analyze_complete
+    watcher.on_analyze_complete = Mock()
+
+    # Create a "file-created" event in the watcher.
+    # Test calling private method directly (this would be called by watchdog)
+    event = namedtuple("Event", "src_path")
+    event.src_path = input_path
+    watcher._on_created(event)
+
+    # Check complete call count and results.
+    assert watcher.on_analyze_complete.call_count == 1
+    recording = watcher.on_analyze_complete.call_args.args[0]
+    # Assert that the date and week_48 values were correctly parsed from filename.
+    assert len(recording.detections) == 2
+    assert recording.date == datetime(
+        year=2022, month=8, day=15, hour=21, minute=5, second=51
+    )
+    assert recording.week_48 == 30
+    assert recording.latitude == 35
+    assert recording.longitude == -120
 
 
 def test_watcher_error():

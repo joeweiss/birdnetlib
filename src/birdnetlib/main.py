@@ -32,9 +32,9 @@ class Recording:
         else:
             self.week_48 = max(1, min(week_48, 48))
 
-        if date:
+        self.date = date
+        if self.date:
             # Convert date to week_48 format for the Analyzer models.
-            self.date = date
             day_of_year = date.timetuple().tm_yday
             days_in_year = 366 if calendar.isleap(date.year) else 365
             self.week_48 = math.ceil((day_of_year / days_in_year) * 48)

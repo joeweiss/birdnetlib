@@ -45,19 +45,27 @@ class DirectoryWatcher:
         # If not overridden, raise the exception.
         raise exception
 
+    def recording_metadata_preparser(self, filepath):
+        return {}
+
     def _on_created(self, event):
         # Detect for this file.
         print(f"New file created: {event.src_path}")
         recordings = []
         for analyzer in self.analyzers:
+            metadata = self.recording_metadata_preparser(event.src_path)
+            lat = metadata["lat"] if "lat" in metadata else self.lat
+            lon = metadata["lon"] if "lon" in metadata else self.lon
+            date = metadata["date"] if "date" in metadata else self.date
             try:
                 recording = Recording(
                     analyzer,
                     event.src_path,
                     week_48=self.week_48,
+                    date=date,
                     sensitivity=self.sensitivity,
-                    lat=self.lat,
-                    lon=self.lon,
+                    lat=lat,
+                    lon=lon,
                     min_conf=self.min_conf,
                 )
                 recording.analyze()
