@@ -54,7 +54,7 @@ def test_watcher_date_preparser_parser():
         os.path.dirname(__file__), "test_files/2022-08-15-birdnet-21:05:51.wav"
     )
 
-    watcher.recording_metadata_preparser = preparser
+    watcher.recording_preanalyze = preparser
 
     # Add a mocked call for on_analyze_complete
     watcher.on_analyze_complete = Mock()
