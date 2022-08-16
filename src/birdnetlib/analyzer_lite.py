@@ -131,8 +131,8 @@ class LiteAnalyzer:
         print("ANALYZING AUDIO...", end=" ", flush=True)
 
         # Convert and prepare metadata
-        lat = recording.latitude or -1  # lite uses -1 for none here.
-        lon = recording.longitude or -1  # lite uses -1 for none here.
+        lat = recording.lat or -1  # lite uses -1 for none here.
+        lon = recording.lon or -1  # lite uses -1 for none here.
         mdata = self.convertMetadata(np.array([lat, lon, recording.week_48]))
         mdata = np.expand_dims(mdata, 0)
 
