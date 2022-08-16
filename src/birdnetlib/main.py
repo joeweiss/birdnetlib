@@ -5,6 +5,7 @@ import warnings
 import audioread
 import calendar
 import math
+from os import path
 
 class Recording:
     def __init__(
@@ -23,33 +24,35 @@ class Recording:
         self.detections_dict = {}  # Old format
         self.detection_list = []
         self.analyzed = False
-
-
-        # Deal with dates, and week_48.
-        # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
-        if week_48 == -1:
-            self.week_48 = -1
-        else:
-            self.week_48 = max(1, min(week_48, 48))
-
-        if date:
-            # Convert date to week_48 format for the Analyzer models.
-            self.date = date
-            day_of_year = date.timetuple().tm_yday
-            days_in_year = 366 if calendar.isleap(date.year) else 365
-            self.week_48 = math.ceil((day_of_year / days_in_year) * 48)
-
+        self.week_48 = week_48
+        self.date = date
         self.sensitivity = max(0.5, min(1.0 - (sensitivity - 1.0), 1.5))
-        self.latitude = lat
-        self.longitude = lon
+        self.lat = lat
+        self.lon = lon
         self.overlap = 0.0
         self.minimum_confidence = max(0.01, min(min_conf, 0.99))
         self.sample_secs = 3.0
 
     def analyze(self):
+        # Compute date to week_48 format as required by current BirdNET analyzers.
+        # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
+        if self.week_48 != -1:
+            self.week_48 = max(1, min(self.week_48, 48))
+
+        if self.date:
+            # Convert date to week_48 format for the Analyzer models.
+            day_of_year = self.date.timetuple().tm_yday
+            days_in_year = 366 if calendar.isleap(self.date.year) else 365
+            self.week_48 = math.ceil((day_of_year / days_in_year) * 48)
+
+        # Read and analyze.
         self.read_audio_data()
         self.analyzer.analyze_recording(self)
         self.analyzed = True
+
+    @property
+    def filename(self):
+        return path.basename(self.path)
 
     @property
     def detections(self):

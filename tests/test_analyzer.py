@@ -197,6 +197,6 @@ def test_species_list_creation():
 
     analyzer = Analyzer()
     species_list = analyzer.return_predicted_species_list(
-        longitude=lon, latitude=lat, week_48=week_48, filter_threshold=filter_threshold
+        lon=lon, lat=lat, week_48=week_48, filter_threshold=filter_threshold
     )
     assert len(species_list) == 152

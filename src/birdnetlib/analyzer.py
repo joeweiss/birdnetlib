@@ -62,8 +62,8 @@ class Analyzer:
         self.labels = []
         self.results = []
         self.custom_species_list = []
-        self._longitude = None
-        self._latitude = None
+        self._lon = None
+        self._lat = None
         self.load_model()
         self.meta_interpreter = None
         self.meta_input_details = None
@@ -130,8 +130,8 @@ class Analyzer:
 
     def return_predicted_species_list(
         self,
-        longitude=None,
-        latitude=None,
+        lon=None,
+        lat=None,
         week_48=None,
         filter_threshold=LOCATION_FILTER_THRESHOLD,
     ):
@@ -140,7 +140,7 @@ class Analyzer:
 
         sample = np.expand_dims(
             np.array(
-                [latitude, longitude, week_48],
+                [lat, lon, week_48],
                 dtype="float32",
             ),
             0,
@@ -172,17 +172,15 @@ class Analyzer:
         print("set_predicted_species_list_from_position")
 
         # Check to see if this species list has been previously cached.
-        list_key = (
-            f"list-{recording.longitude}-{recording.latitude}-{recording.week_48}"
-        )
+        list_key = f"list-{recording.lon}-{recording.lat}-{recording.week_48}"
 
         if list_key in self.cached_species_lists:
             self.custom_species_list = self.cached_species_lists[list_key]
             return
 
         species_list = self.return_predicted_species_list(
-            longitude=recording.longitude,
-            latitude=recording.latitude,
+            lon=recording.lon,
+            lat=recording.lat,
             week_48=recording.week_48,
         )
         self.custom_species_list = species_list
@@ -193,18 +191,15 @@ class Analyzer:
     def analyze_recording(self, recording):
         print("analyze_recording", recording.path)
 
-        if self.custom_species_list_path and recording.longitude and recording.latitude:
+        if self.custom_species_list_path and recording.lon and recording.lat:
             raise ValueError(
                 "Recording lon/lat should not be used in conjunction with a custom species list."
             )
 
         # If recording has lon/lat, and the lon/lat does not match what was previous used, then return a new species list.
-        if recording.longitude and recording.latitude:
-            print("recording has longitude/latitude")
-            if (
-                self._longitude != recording.longitude
-                and self._latitude != recording.latitude
-            ):
+        if recording.lon and recording.lat:
+            print("recording has lon/lat")
+            if self._lon != recording.lon and self._lat != recording.lat:
                 print("new lon/lat, need a new species list")
                 self.set_predicted_species_list_from_position(recording)
 

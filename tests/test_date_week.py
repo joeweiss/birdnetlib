@@ -21,6 +21,7 @@ def test_date_conversion_to_week_48():
         analyzer,
         input_path,
     )
+    recording.analyze()
 
     assert recording.week_48 == -1  # Analyzers expect -1 if non-defined.
 
@@ -28,7 +29,8 @@ def test_date_conversion_to_week_48():
     lon = -120.7463
     lat = 35.4244
     week_48 = 18  # This is the 2nd week of the 5th month, ie May 10th.
-    # !!!! ???? For more info on the above determination, see Analyzer models ... it isn't 52 week year format!
+    # !!!! ???? For more info on the above determination,
+    #           see Analyzer models ... they don't use 52 week/year format!
     min_conf = 0.7
 
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
@@ -43,6 +45,7 @@ def test_date_conversion_to_week_48():
         week_48=week_48,
         min_conf=min_conf,
     )
+    recording.analyze()
 
     assert recording.week_48 == week_48
 
@@ -65,5 +68,6 @@ def test_date_conversion_to_week_48():
         date=date,
         min_conf=min_conf,
     )
+    recording.analyze()
 
     assert recording.week_48 == week_48

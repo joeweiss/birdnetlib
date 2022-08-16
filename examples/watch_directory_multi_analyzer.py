@@ -1,4 +1,4 @@
-from birdnetlib.watcher import DirectoryWatcherMultiAnalyzer
+from birdnetlib.watcher import DirectoryWatcher
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from birdnetlib.analyzer import Analyzer
 from datetime import datetime
@@ -35,7 +35,7 @@ analyzer = Analyzer()
 
 print("Starting Watcher")
 directory = "."
-watcher = DirectoryWatcherMultiAnalyzer(
+watcher = DirectoryWatcher(
     directory,
     analyzers=[analyzer, analyzer_lite],
     lon=-120.7463,

@@ -80,7 +80,7 @@ recording.analyze()
 print(recording.detections)
 ```
 
-### Other common helper classes
+### Other common utility classes
 
 #### DirectoryWatcher
 
@@ -98,28 +98,10 @@ watcher.watch()
 
 See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
 
-#### DirectoryWatcherMultiAnalyzer
+#### Additional utility class examples
 
-`DirectoryWatcherMultiAnalyzer` can watch a directory and analyze new files as they are created, with multiple analyzer models.
-
-```
-def on_analyze_all_complete(recording_list):
-    for recording in recording_list:
-        print(recording.path, recording.analyzer.name)
-        pprint(recording.detections)
-
-analyzer_lite = LiteAnalyzer()
-analyzer = Analyzer()
-
-watcher = DirectoryWatcherMultiAnalyzer(
-    "/Birds/mp3_dir",
-    analyzers=[analyzer, analyzer_lite],
-)
-watcher.on_analyze_all_complete = on_analyze_all_complete
-watcher.watch()
-```
-
-See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_multi_analyzer.py) for analyzer options and error handling callbacks.
+- [Watch a directory and analyze with multiple analyzer models as files are saved](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_multi_analyzer.py)
+- [Watch a directory and apply datetimes by parsing file names (eg _2022-08-15-birdnet-21:05:52.wav_) prior to analyzing](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_date_filenames.py) This example can also be used to modify lat/lon, min_conf, etc., based on file name prior to analyzing.
 
 ## About BirdNET-Lite and BirdNET-Analyzer
 

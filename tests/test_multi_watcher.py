@@ -1,4 +1,4 @@
-from birdnetlib.watcher import DirectoryWatcherMultiAnalyzer
+from birdnetlib.watcher import DirectoryWatcher
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from birdnetlib.analyzer import Analyzer
 import os
@@ -11,9 +11,7 @@ def test_watcher_complete():
     analyzer_lite = LiteAnalyzer()
 
     directory = "."
-    watcher = DirectoryWatcherMultiAnalyzer(
-        directory, analyzers=[analyzer, analyzer_lite]
-    )
+    watcher = DirectoryWatcher(directory, analyzers=[analyzer, analyzer_lite])
 
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
 
@@ -44,7 +42,7 @@ def test_watcher_complete():
 def test_watcher_error():
     analyzer = LiteAnalyzer()
     directory = "."
-    watcher = DirectoryWatcherMultiAnalyzer(directory, analyzers=[analyzer])
+    watcher = DirectoryWatcher(directory, analyzers=[analyzer])
 
     # Not an mp3 file, should throw error.
     input_path = os.path.join(os.path.dirname(__file__), "test_files/species_list.txt")
@@ -70,5 +68,5 @@ def test_default_analyzer():
     # Test that if an analyzer isn't provided, that the LiteAnalyzer is used.
 
     directory = "."
-    watcher = DirectoryWatcherMultiAnalyzer(directory)
+    watcher = DirectoryWatcher(directory)
     assert type(watcher.analyzers[0]).__name__ == "LiteAnalyzer"
