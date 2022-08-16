@@ -32,16 +32,16 @@ def test_watcher_complete():
     assert len(detections) == 2
 
 
-def preparser(filepath):
-    # Returns a dictionary of values that are applied to the recording before processing.
-    filename = filepath.split("/")[-1]
-    # 2022-08-15-birdnet-21:05:51.wav, as an example, use BirdNET-Pi's preferred format
+def preparser(recording):
+    # Used to modify the recording object before analyzing.
+    filename = recording.filename
+    # 2022-08-15-birdnet-21:05:51.wav, as an example, use BirdNET-Pi's preferred format for testing.
     dt = datetime.strptime(filename, "%Y-%m-%d-birdnet-%H:%M:%S.wav")
-    # Note, you don't have to return all of the possible values here (lat, lon, date).
-    # The code will handle just returning whatever needs to be changed on the recording object pre-parsing.
-    lon = -120
-    lat = 35
-    return {"date": dt, "lon": lon, "lat": lat}
+    # Modify the recording object here as needed.
+    # For testing, we're changing the date, lon and lat.
+    recording.date = dt
+    recording.lon = -120
+    recording.lat = 35
 
 
 def test_watcher_date_preparser_parser():
@@ -74,8 +74,8 @@ def test_watcher_date_preparser_parser():
         year=2022, month=8, day=15, hour=21, minute=5, second=51
     )
     assert recording.week_48 == 30
-    assert recording.latitude == 35
-    assert recording.longitude == -120
+    assert recording.lat == 35
+    assert recording.lon == -120
 
 
 def test_watcher_error():

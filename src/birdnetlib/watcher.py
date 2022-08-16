@@ -53,21 +53,22 @@ class DirectoryWatcher:
         print(f"New file created: {event.src_path}")
         recordings = []
         for analyzer in self.analyzers:
-            metadata = self.recording_metadata_preparser(event.src_path)
-            lat = metadata["lat"] if "lat" in metadata else self.lat
-            lon = metadata["lon"] if "lon" in metadata else self.lon
-            date = metadata["date"] if "date" in metadata else self.date
+            # metadata = self.recording_metadata_preparser(event.src_path)
+            # lat = metadata["lat"] if "lat" in metadata else self.lat
+            # lon = metadata["lon"] if "lon" in metadata else self.lon
+            # date = metadata["date"] if "date" in metadata else self.date
             try:
                 recording = Recording(
                     analyzer,
                     event.src_path,
                     week_48=self.week_48,
-                    date=date,
+                    date=self.date,
                     sensitivity=self.sensitivity,
-                    lat=lat,
-                    lon=lon,
+                    lat=self.lat,
+                    lon=self.lon,
                     min_conf=self.min_conf,
                 )
+                self.recording_metadata_preparser(recording)
                 recording.analyze()
                 recordings.append(recording)
                 self.on_analyze_complete(recording)
