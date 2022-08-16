@@ -1,8 +1,6 @@
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 import time
-from birdnetlib.exceptions import AudioFormatError
-
 from birdnetlib import Recording
 
 
