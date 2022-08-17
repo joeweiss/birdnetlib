@@ -130,7 +130,7 @@ class Analyzer:
 
         print("return_predicted_species_list")
 
-        return self.species_class.predict(
+        return self.species_class.return_list_for_analyzer(
             lat=lat, lon=lon, week_48=week_48, threshold=filter_threshold
         )
 

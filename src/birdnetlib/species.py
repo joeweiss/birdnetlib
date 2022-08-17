@@ -27,7 +27,6 @@ class SpeciesList:
         self.threshold = None
 
         # Labels init
-
         self.labels = []
         self.load_labels()
 
@@ -40,7 +39,12 @@ class SpeciesList:
 
         self.load_species_list_model()
 
-    def predict(self, lon=None, lat=None, date=None, week_48=-1, threshold=0.3):
+    def return_list_for_analyzer(
+        self, lon=None, lat=None, date=None, week_48=-1, threshold=0.3
+    ):
+        # Returns the list in the format preferred by BirdNET Analyzers.
+        # ['Haemorhous mexicanus_House Finch', 'Aphelocoma californica_California Scrub-Jay']
+
         self.lon = lon
         self.lat = lat
         self.date = date
