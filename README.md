@@ -80,7 +80,7 @@ recording.analyze()
 print(recording.detections)
 ```
 
-### Other common utility classes
+### Utility classes
 
 #### DirectoryWatcher
 
@@ -97,6 +97,16 @@ watcher.watch()
 ```
 
 See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
+
+`SpeciesList` uses BirdNET-Analyzer to generate possible species lists from location and date.
+
+```
+species = SpeciesList()
+species_list = species.return_list_for_analyzer(
+    lon=-120.7463, lat=35.4244, date=datetime(year=2022, month=5, day=10)
+)
+print(species_list)  # ['Haemorhous mexicanus_House Finch', 'Aphelocoma californica_California Scrub-Jay', ...]
+```
 
 #### Additional utility class examples
 
