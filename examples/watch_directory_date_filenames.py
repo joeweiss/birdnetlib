@@ -34,7 +34,7 @@ def preanalyze(recording):
     # 2022-08-15-birdnet-21:05:51.wav, as an example, use BirdNET-Pi's preferred format for testing.
     dt = datetime.strptime(filename, "%Y-%m-%d-birdnet-%H:%M:%S.wav")
     # Modify the recording object here as needed.
-    # For testing, we're changing the date, lon and lat.
+    # For testing, we're changing the date. We could also modify lat/long here.
     recording.date = dt
 
 
