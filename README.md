@@ -98,7 +98,9 @@ watcher.watch()
 
 See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py) for analyzer options and error handling callbacks.
 
-`SpeciesList` uses BirdNET-Analyzer to generate possible species lists from location and date.
+#### SpeciesList
+
+`SpeciesList` uses BirdNET-Analyzer to predict species lists from location and date.
 
 ```
 species = SpeciesList()
