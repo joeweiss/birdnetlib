@@ -3,9 +3,8 @@ import numpy as np
 from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
 import warnings
 import audioread
-import calendar
-import math
 from os import path
+from birdnetlib.utils import return_week_48_from_datetime
 
 class Recording:
     def __init__(
@@ -41,9 +40,7 @@ class Recording:
 
         if self.date:
             # Convert date to week_48 format for the Analyzer models.
-            day_of_year = self.date.timetuple().tm_yday
-            days_in_year = 366 if calendar.isleap(self.date.year) else 365
-            self.week_48 = math.ceil((day_of_year / days_in_year) * 48)
+            self.week_48 = return_week_48_from_datetime(self.date)
 
         # Read and analyze.
         self.read_audio_data()
