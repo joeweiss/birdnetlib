@@ -132,3 +132,5 @@ dmypy.json
 
 .autoenv
 .DS_Store
+examples/*.mp3
+examples/*.wav
