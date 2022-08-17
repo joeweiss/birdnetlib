@@ -1,6 +1,5 @@
 from multiprocessing.sharedctypes import Value
 import os
-import re
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -13,16 +12,13 @@ except:
 import numpy as np
 import operator
 
-from birdnetlib.exceptions import AudioFormatError
+from birdnetlib.species import SpeciesList
 
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "models/analyzer/BirdNET_GLOBAL_2K_V2.1_Model_FP32.tflite",
 )
-SPECIES_MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "models/analyzer/BirdNET_GLOBAL_2K_V2.1_MData_Model_FP32.tflite",
-)
+
 LABEL_PATH = os.path.join(
     os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_2K_V2.1_Labels.txt"
 )
@@ -62,18 +58,14 @@ class Analyzer:
         self.labels = []
         self.results = []
         self.custom_species_list = []
-        self._lon = None
-        self._lat = None
         self.load_model()
-        self.meta_interpreter = None
-        self.meta_input_details = None
-        self.meta_output_details = None
-        self.meta_input_layer_index = None
-        self.meta_output_layer_index = None
-        self.load_species_list_model()
         self.load_labels()
+
         self.cached_species_lists = {}
         self.custom_species_list_path = None
+
+        self.species_class = SpeciesList()
+
         if custom_species_list_path:
             self.custom_species_list_path = custom_species_list_path
             self.load_custom_list()
@@ -138,35 +130,10 @@ class Analyzer:
 
         print("return_predicted_species_list")
 
-        sample = np.expand_dims(
-            np.array(
-                [lat, lon, week_48],
-                dtype="float32",
-            ),
-            0,
+        return self.species_class.predict(
+            lat=lat, lon=lon, week_48=week_48, threshold=filter_threshold
         )
-        self.meta_interpreter.set_tensor(self.meta_input_layer_index, sample)
-        self.meta_interpreter.invoke()
 
-        l_filter = self.meta_interpreter.get_tensor(self.meta_output_layer_index)[0]
-
-        # Apply thresho ld
-        l_filter = np.where(l_filter >= filter_threshold, l_filter, 0)
-
-        # Zip with labels
-        l_filter = list(zip(l_filter, self.labels))
-
-        # Sort by filter value
-        l_filter = sorted(l_filter, key=lambda x: x[0], reverse=True)
-
-        species_list = []
-
-        for s in l_filter:
-            if s[0] >= filter_threshold:
-                species_list.append(s[1])
-
-        print(len(species_list), "species loaded.")
-        return species_list
 
     def set_predicted_species_list_from_position(self, recording):
         print("set_predicted_species_list_from_position")
@@ -196,12 +163,10 @@ class Analyzer:
                 "Recording lon/lat should not be used in conjunction with a custom species list."
             )
 
-        # If recording has lon/lat, and the lon/lat does not match what was previous used, then return a new species list.
+        # If recording has lon/lat, load cached list or predict a new species list.
         if recording.lon and recording.lat:
             print("recording has lon/lat")
-            if self._lon != recording.lon and self._lat != recording.lat:
-                print("new lon/lat, need a new species list")
-                self.set_predicted_species_list_from_position(recording)
+            self.set_predicted_species_list_from_position(recording)
 
         start = 0
         end = recording.sample_secs
@@ -248,25 +213,6 @@ class Analyzer:
 
         print("Model loaded.")
 
-    def load_species_list_model(self):
-        print("load_species_list_model")
-
-        model_path = SPECIES_MODEL_PATH
-        num_threads = 1  # Default from BN-A config
-        self.meta_interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=num_threads
-        )
-        self.meta_interpreter.allocate_tensors()
-
-        # Get input and output tensors.
-        self.meta_input_details = self.meta_interpreter.get_input_details()
-        self.meta_output_details = self.meta_interpreter.get_output_details()
-
-        # Get input tensor index
-        self.meta_input_layer_index = self.meta_input_details[0]["index"]
-        self.meta_output_layer_index = self.meta_output_details[0]["index"]
-
-        print("Meta model loaded.")
 
     def load_labels(self):
         labels_file_path = LABEL_PATH
