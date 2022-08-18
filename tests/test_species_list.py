@@ -36,8 +36,6 @@ def test_species_list_for_analyzers():
     )
     assert len(species_list) == 83
 
-    print(species_list)
-
 
 def test_species_list():
     lon = -120.7463
