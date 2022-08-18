@@ -39,9 +39,7 @@ class SpeciesList:
 
         self.load_species_list_model()
 
-    def return_list_for_analyzer(
-        self, lon=None, lat=None, date=None, week_48=-1, threshold=0.3
-    ):
+    def return_list(self, lon=None, lat=None, date=None, week_48=-1, threshold=0.3):
         # Returns the list in the format preferred by BirdNET Analyzers.
         # ['Haemorhous mexicanus_House Finch', 'Aphelocoma californica_California Scrub-Jay']
 
@@ -87,12 +85,16 @@ class SpeciesList:
 
         for s in l_filter:
             if s[0] >= self.threshold:
-                species_list.append(s[1])
+                split_name = s[1].split("_")
+                item = {
+                    "scientific_name": split_name[0],
+                    "common_name": split_name[1],
+                    "threshold": s[0],
+                }
+                species_list.append(item)
 
         print(len(species_list), "species loaded.")
         return species_list
-
-        return []
 
     def load_species_list_model(self):
         print("load_species_list_model")
@@ -122,3 +124,12 @@ class SpeciesList:
                 labels.append(line.replace("\n", ""))
         self.labels = labels
         print("Labels loaded.")
+
+    def return_list_for_analyzer(
+        self, lon=None, lat=None, date=None, week_48=-1, threshold=0.3
+    ):
+        species = self.return_list(
+            lon=lon, lat=lat, date=date, week_48=week_48, threshold=threshold
+        )
+        species_split = [f'{i["scientific_name"]}_{i["common_name"]}' for i in species]
+        return species_split
