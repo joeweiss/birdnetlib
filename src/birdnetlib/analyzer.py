@@ -16,11 +16,11 @@ from birdnetlib.species import SpeciesList
 
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
-    "models/analyzer/BirdNET_GLOBAL_2K_V2.1_Model_FP32.tflite",
+    "models/analyzer/BirdNET_GLOBAL_3K_V2.2_Model_FP32.tflite",
 )
 
 LABEL_PATH = os.path.join(
-    os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_2K_V2.1_Labels.txt"
+    os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_3K_V2.2_Labels.txt"
 )
 
 
