@@ -46,7 +46,7 @@ class DirectoryWatcher:
     def recording_preanalyze(self, recording):
         pass
 
-    def _on_created(self, event):
+    def _on_closed(self, event):
         # Detect for this file.
         print(f"New file created: {event.src_path}")
         recordings = []
@@ -79,7 +79,7 @@ class DirectoryWatcher:
         my_event_handler = PatternMatchingEventHandler(
             patterns, ignore_patterns, ignore_directories, case_sensitive
         )
-        my_event_handler.on_created = self._on_created
+        my_event_handler.on_closed = self._on_closed
         go_recursively = True
         my_observer = Observer()
         my_observer.schedule(my_event_handler, self.directory, recursive=go_recursively)
