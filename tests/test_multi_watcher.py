@@ -23,7 +23,7 @@ def test_watcher_complete():
     # Test calling private method directly (this would be called by watchdog)
     event = namedtuple("Event", "src_path")
     event.src_path = input_path
-    watcher._on_created(event)
+    watcher._on_closed(event)
 
     # Check complete call count and results.
     assert watcher.on_analyze_complete.call_count == 2
@@ -55,7 +55,7 @@ def test_watcher_error():
     # but we're just testing to see if error is thrown.
     event = namedtuple("Event", "src_path")
     event.src_path = input_path
-    watcher._on_created(event)
+    watcher._on_closed(event)
 
     # Check complete call count and results.
     assert watcher.on_error.call_count == 1
