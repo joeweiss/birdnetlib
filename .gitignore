@@ -134,3 +134,4 @@ dmypy.json
 .DS_Store
 examples/*.mp3
 examples/*.wav
+examples/*/*.wav
