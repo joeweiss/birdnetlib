@@ -1,19 +1,17 @@
 # This example requires arecord, which is available on most Linux systems.
+# Record to 15 second files with arecord, then analyze with two analyzers.
+
 from subprocess import Popen
-from time import sleep
-
-from birdnetlib.watcher import DirectoryWatcher
-
-# from birdnetlib.analyzer_lite import LiteAnalyzer
-
-from birdnetlib.analyzer import Analyzer
-from datetime import datetime
-from pprint import pprint
-import os
 import sys
 import signal
+from datetime import datetime
+from pprint import pprint
 
-RECORD_PROCESS = None
+from birdnetlib.watcher import DirectoryWatcher
+from birdnetlib.analyzer_lite import LiteAnalyzer
+from birdnetlib.analyzer import Analyzer
+
+RECORDING_DIR = "/home/pi/birdnetlib/examples/recordings"
 
 
 def on_analyze_complete(recording):
@@ -52,8 +50,18 @@ def preanalyze(recording):
 def main():
     print("linux_arecord_and_watch")
 
-    recording_dir = "/home/pi/birdnetlib/examples/recordings"
+    recording_dir = RECORDING_DIR
     duration_secs = 15
+
+    RECORD_PROCESS = None
+
+    def signal_handler(sig, frame):
+        RECORD_PROCESS.terminate()
+        RECORD_PROCESS.wait()
+        print("Gracefully exitting process ...")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
 
     arecord_command_list = [
         "arecord",
@@ -68,18 +76,22 @@ def main():
         "--use-strftime",
         f"{recording_dir}/%F-birdnet-%H:%M:%S.wav",
     ]
-    print(arecord_command_list)
+
+    # Start arecord in a separate process ...
     RECORD_PROCESS = Popen(arecord_command_list)
 
     print("Starting Analyzers")
-    # analyzer_lite = LiteAnalyzer()
+
+    analyzer_lite = LiteAnalyzer()
     analyzer = Analyzer()
+    analyzers = [analyzer, analyzer_lite]
 
     print("Starting Watcher")
+
     directory = recording_dir
     watcher = DirectoryWatcher(
         directory,
-        analyzers=[analyzer],
+        analyzers=analyzers,
         lon=-77.3664,
         lat=35.6127,
         min_conf=0.1,
@@ -91,20 +103,8 @@ def main():
     watcher.watch()
 
 
-def signal_handler(sig, frame):
-    print("You pressed Ctrl+C!")
-    print(RECORD_PROCESS)
-    RECORD_PROCESS.terminate()
-    RECORD_PROCESS.wait()
-    print("yo yo yo")
-    sys.exit(0)
-
-
 if __name__ == "__main__":
-
-    signal.signal(signal.SIGINT, signal_handler)
     main()
-
     try:
         main()
     except KeyboardInterrupt:
