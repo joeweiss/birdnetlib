@@ -82,6 +82,25 @@ print(recording.detections)
 
 ### Utility classes
 
+#### DirectoryAnalyzer
+
+`DirectoryAnalyzer` can process a directory and analyze contained files.
+
+```
+def on_analyze_complete(recording):
+    print(recording.path)
+    pprint(recording.detections)
+
+directory = DirectoryAnalyzer(
+    "/Birds/mp3_dir",
+    patterns=["*.mp3", "*.wav"]
+)
+directory.on_analyze_complete = on_analyze_complete
+directory.process()
+```
+
+See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples/batch_directory.py) for analyzer options and error handling callbacks.
+
 #### DirectoryWatcher
 
 `DirectoryWatcher` can watch a directory and analyze new files as they are created.
