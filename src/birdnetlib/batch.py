@@ -1,10 +1,8 @@
-from watchdog.observers import Observer
-from watchdog.events import PatternMatchingEventHandler
-import time
 from birdnetlib import Recording
+from pathlib import Path
 
 
-class DirectoryWatcher:
+class DirectoryAnalyzer:
     def __init__(
         self,
         directory,
@@ -15,6 +13,7 @@ class DirectoryWatcher:
         lat=None,
         lon=None,
         min_conf=0.1,
+        patterns=["*.mp3", "*.wav"],
     ):
         self.directory = directory
         if len(analyzers) > 0:
@@ -32,11 +31,16 @@ class DirectoryWatcher:
         self.lat = lat
         self.lon = lon
         self.min_conf = min_conf
+        self.directory_recordings = []
+        self.patterns = patterns
 
     def on_analyze_complete(self, recording):
         pass
 
     def on_analyze_file_complete(self, recordings):
+        pass
+
+    def on_analyze_directory_complete(self, recordings):
         pass
 
     def on_error(self, recording, exception):
@@ -46,15 +50,14 @@ class DirectoryWatcher:
     def recording_preanalyze(self, recording):
         pass
 
-    def _on_closed(self, event):
+    def process_file(self, path):
         # Detect for this file.
-        print(f"New file created: {event.src_path}")
         recordings = []
         for analyzer in self.analyzers:
             try:
                 recording = Recording(
                     analyzer,
-                    event.src_path,
+                    path,
                     week_48=self.week_48,
                     date=self.date,
                     sensitivity=self.sensitivity,
@@ -70,24 +73,16 @@ class DirectoryWatcher:
             except BaseException as error:
                 self.on_error(recording, error)
         self.on_analyze_file_complete(recordings)
+        self.directory_recordings.extend(recordings)
 
-    def watch(self):
-        patterns = ["*.mp3", "*.wav"]
-        ignore_patterns = None
-        ignore_directories = False
-        case_sensitive = True
-        my_event_handler = PatternMatchingEventHandler(
-            patterns, ignore_patterns, ignore_directories, case_sensitive
-        )
-        my_event_handler.on_closed = self._on_closed
-        go_recursively = True
-        my_observer = Observer()
-        my_observer.schedule(my_event_handler, self.directory, recursive=go_recursively)
-        my_observer.start()
-        print("Starting watcher ...")
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            my_observer.stop()
-            my_observer.join()
+    def process(self):
+        patterns = self.patterns
+        # print(self.directory)
+        files = []
+        for pattern in patterns:
+            files.extend(Path(self.directory).glob(pattern))
+        # print(files)
+        for file in files:
+            self.process_file(file)
+
+        self.on_analyze_directory_complete(self.directory_recordings)
