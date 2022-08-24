@@ -17,7 +17,7 @@ def test_watcher_complete():
 
     # Add a mocked call for on_analyze_complete
     watcher.on_analyze_complete = Mock()
-    watcher.on_analyze_all_complete = Mock()
+    watcher.on_analyze_file_complete = Mock()
 
     # Create a "file-created" event in the watcher.
     # Test calling private method directly (this would be called by watchdog)
@@ -35,8 +35,8 @@ def test_watcher_complete():
     assert len(lite_recording.detections) == 2
     assert lite_recording.analyzer.name == "LiteAnalyzer"
 
-    assert watcher.on_analyze_all_complete.call_count == 1
-    assert len(watcher.on_analyze_all_complete.call_args.args[0]) == 2
+    assert watcher.on_analyze_file_complete.call_count == 1
+    assert len(watcher.on_analyze_file_complete.call_args.args[0]) == 2
 
 
 def test_watcher_error():

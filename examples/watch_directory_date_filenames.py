@@ -12,9 +12,9 @@ def on_analyze_complete(recording):
     pprint(recording.detections)
 
 
-def on_analyze_all_complete(recording_list):
+def on_analyze_file_complete(recording_list):
     print("---------------------------")
-    print("on_analyze_all_complete")
+    print("on_analyze_file_complete")
     print("---------------------------")
     # All analyzations are completed. Results passed as a list of Recording objects.
     for recording in recording_list:
@@ -54,6 +54,6 @@ watcher = DirectoryWatcher(
 )
 watcher.recording_preanalyze = preanalyze
 watcher.on_analyze_complete = on_analyze_complete
-watcher.on_analyze_all_complete = on_analyze_all_complete
+watcher.on_analyze_file_complete = on_analyze_file_complete
 watcher.on_error = on_error
 watcher.watch()
