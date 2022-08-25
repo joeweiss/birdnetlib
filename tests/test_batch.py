@@ -32,6 +32,8 @@ def test_batch():
         )
         batch.process()
         assert len(batch.directory_recordings) == 5
+        # Ensure path is a string rather than PosixPath
+        assert type(batch.directory_recordings[0].path).__name__ == "str"
 
 
 def test_batch_extensions():

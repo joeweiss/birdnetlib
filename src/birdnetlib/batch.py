@@ -83,6 +83,6 @@ class DirectoryAnalyzer:
             files.extend(Path(self.directory).glob(pattern))
         # print(files)
         for file in files:
-            self.process_file(file)
+            self.process_file(str(file))
 
         self.on_analyze_directory_complete(self.directory_recordings)
