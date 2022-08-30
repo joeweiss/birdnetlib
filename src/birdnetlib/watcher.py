@@ -6,6 +6,8 @@ from birdnetlib import Recording
 import glob
 import os
 from time import sleep
+import hashlib
+
 
 class DirectoryWatcher:
     def __init__(
@@ -104,17 +106,34 @@ class DirectoryWatcher:
         files = []
         for ext in patterns:
             files.extend(glob.glob(os.path.join(self.directory, ext)))
+        files.sort()
         return files
+
+    def get_file_md5(self, filepath):
+        with open(filepath, "rb") as file:
+            file_contents = file.read()
+            return hashlib.md5(file_contents).hexdigest()
+        return False
 
     def watch_via_polling(self):
         seen_files = self.return_file_list()
+        last_hash = ""
         while True:
             new_files = self.return_file_list()
             files = [x for x in new_files if x not in seen_files]
-            print(files)
             if len(files) > 0:
-                Event = namedtuple("Event", ["src_path"])
-                event = Event(os.path.join(self.directory, files[0]))
-                self._on_closed(event)
-                seen_files.append(files[0])
-            sleep(1)
+                path = os.path.join(self.directory, files[0])
+                h = self.get_file_md5(path)
+                # Compare file hash to last hash (to confirm file is not being recorded)
+                # Clumsy, but works as a fallback to watchdog.
+                if h and h == last_hash:
+                    Event = namedtuple("Event", ["src_path"])
+                    event = Event(path)
+                    self._on_closed(event)
+                    seen_files.append(files[0])
+                    # Remove any seen_files no longer in directory.
+                    current_list = self.return_file_list()
+                    seen_files = [x for x in seen_files if x in current_list]
+                else:
+                    last_hash = h
+            sleep(2)
