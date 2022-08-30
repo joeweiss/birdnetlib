@@ -1,8 +1,11 @@
+from collections import namedtuple
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 import time
 from birdnetlib import Recording
-
+import glob
+import os
+from time import sleep
 
 class DirectoryWatcher:
     def __init__(
@@ -15,6 +18,7 @@ class DirectoryWatcher:
         lat=None,
         lon=None,
         min_conf=0.1,
+        use_polling=False,
     ):
         self.directory = directory
         if len(analyzers) > 0:
@@ -32,6 +36,7 @@ class DirectoryWatcher:
         self.lat = lat
         self.lon = lon
         self.min_conf = min_conf
+        self.use_polling = use_polling
 
     def on_analyze_complete(self, recording):
         pass
@@ -72,6 +77,8 @@ class DirectoryWatcher:
         self.on_analyze_file_complete(recordings)
 
     def watch(self):
+        if self.use_polling:
+            self.watch_via_polling()  # Doesn't return.
         patterns = ["*.mp3", "*.wav"]
         ignore_patterns = None
         ignore_directories = False
@@ -91,3 +98,23 @@ class DirectoryWatcher:
         except KeyboardInterrupt:
             my_observer.stop()
             my_observer.join()
+
+    def return_file_list(self):
+        patterns = ["*.mp3", "*.wav"]
+        files = []
+        for ext in patterns:
+            files.extend(glob.glob(os.path.join(self.directory, ext)))
+        return files
+
+    def watch_via_polling(self):
+        seen_files = self.return_file_list()
+        while True:
+            new_files = self.return_file_list()
+            files = [x for x in new_files if x not in seen_files]
+            print(files)
+            if len(files) > 0:
+                Event = namedtuple("Event", ["src_path"])
+                event = Event(os.path.join(self.directory, files[0]))
+                self._on_closed(event)
+                seen_files.append(files[0])
+            sleep(1)
