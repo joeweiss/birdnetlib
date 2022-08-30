@@ -27,6 +27,7 @@ watcher = DirectoryWatcher(
     lat=35.4244,
     date=datetime(year=2022, month=5, day=10),
     min_conf=0.4,
+    use_polling=True,
 )
 
 watcher.on_analyze_complete = on_analyze_complete
