@@ -10,7 +10,7 @@ exclude = [
 
 [project]
 name = "birdnetlib"
-version = "0.0.17"
+version = "0.0.18"
 authors = [
   { name="Joe Weiss", email="joe.weiss@gmail.com" },
 ]
