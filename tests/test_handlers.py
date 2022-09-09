@@ -1,6 +1,6 @@
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
-from birdnetlib.handlers import SqliteHandler
+from birdnetlib.handlers import SQLiteHandler
 import tempfile
 import os
 import sqlite3
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS detections (
 """
     )
 
-    db_handler = SqliteHandler(db_path)
+    db_handler = SQLiteHandler(db_path)
 
     lon = -120.7463
     lat = 35.4244
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS detections (
     # Pass an empty file to handler.
     tf = tempfile.NamedTemporaryFile(suffix=".db")
     db_path = tf.name
-    db_handler = SqliteHandler(db_path)
+    db_handler = SQLiteHandler(db_path)
 
     success = db_handler.log(recording)
 

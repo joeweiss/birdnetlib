@@ -2,12 +2,12 @@ from birdnetlib.watcher import DirectoryWatcher
 from birdnetlib.analyzer import Analyzer
 from datetime import datetime
 from pprint import pprint
-from birdnetlib.handlers import SqliteHandler
+from birdnetlib.handlers import SQLiteHandler
 
 
-# Initialize SqliteHandler
+# Initialize SQLiteHandler
 db_path = "birds.db"
-handler = SqliteHandler(db_path)
+handler = SQLiteHandler(db_path)
 
 
 def on_analyze_complete(recording):
@@ -25,7 +25,7 @@ def on_analyze_file_complete(recording_list):
     for recording in recording_list:
         print(recording.filename, recording.date, recording.analyzer.name)
         pprint(recording.detections)
-        handler.log(recording)  # Log the recording to the SqliteHandler
+        handler.log(recording)  # Log the recording to the SQLiteHandler
         print("---------------------------")
 
 

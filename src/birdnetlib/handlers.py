@@ -2,7 +2,7 @@ import sqlite3
 from datetime import datetime
 
 
-class SqliteHandler:
+class SQLiteHandler:
     def __init__(self, db_path):
         self.db_path = db_path
         # Confirm the db_path exists and can be opened.
