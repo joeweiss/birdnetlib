@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS detections (
             sens = recording.sensitivity
             overlap = recording.overlap
             file_name = recording.filename
-            created_at = datetime.now()
+            created_at = recording.date or datetime.now()
             updated_at = datetime.now()
             data.append(
                 [

@@ -4,7 +4,7 @@ from birdnetlib.handlers import SQLiteHandler
 import tempfile
 import os
 import sqlite3
-
+from datetime import datetime
 
 def test_sqlite_handler():
 
@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS detections (
     assert items[0] == (
         "Haemorhous mexicanus",
         "House Finch",
-        0.5066996216773987,
+        recording.detections[0]["confidence"],
         35.4244,
         -120.7463,
         0.25,
@@ -87,3 +87,35 @@ CREATE TABLE IF NOT EXISTS detections (
     cur = con.cursor()
     count = cur.execute("SELECT count() FROM detections").fetchone()[0]
     assert count == len(recording.detections)
+
+    # Pass a specific recording date
+    # New database and handler for testing.
+    tf = tempfile.NamedTemporaryFile(suffix=".db")
+    db_path = tf.name
+    db_handler = SQLiteHandler(db_path)
+
+    recording.date = datetime.now()
+    success = db_handler.log(recording)
+
+    assert success
+
+    con = sqlite3.connect(db_path)
+    cur = con.cursor()
+    items = []
+    for row in cur.execute("SELECT * FROM detections"):
+        items.append(row)
+
+    assert items[0] == (
+        "Haemorhous mexicanus",
+        "House Finch",
+        recording.detections[0]["confidence"],
+        35.4244,
+        -120.7463,
+        0.25,
+        18,
+        1.0,
+        0.0,
+        "soundscape.wav",
+        str(recording.date),
+        items[0][-1],
+    )
