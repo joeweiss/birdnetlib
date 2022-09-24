@@ -122,7 +122,10 @@ class Detection:
 
     @property
     def confidence(self):
-        return self.data[0][1]
+        confidence = self.data[0][1]
+        if type(confidence) is np.float32:
+            return confidence.item()
+        return confidence
 
     @property
     def scientific_name(self):
