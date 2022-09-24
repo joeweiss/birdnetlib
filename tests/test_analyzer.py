@@ -69,6 +69,9 @@ def test_without_species_list():
         len(analyzer.custom_species_list) == 154
     )  # Check that this matches the number printed by the cli version.
 
+    # Check that detection confidence is float.
+    assert type(recording.detections[0]["confidence"]) is float
+
 
 def test_with_species_list():
 

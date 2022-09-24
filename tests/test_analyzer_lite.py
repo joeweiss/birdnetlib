@@ -70,9 +70,11 @@ def test_basic():
     assert recording.detections[0]["common_name"] == "House Wren"
     assert pytest.approx(recording.detections[0]["confidence"], 0.01) == 0.27517712
 
+    # Check that detection confidence is float.
+    assert type(recording.detections[0]["confidence"]) is float
+
     assert commandline_results[0]["common_name"] == "House Wren"
     assert pytest.approx(commandline_results[0]["confidence"], 0.01) == 0.27517712
-
 
 def test_with_custom_list():
 
