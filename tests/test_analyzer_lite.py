@@ -64,6 +64,8 @@ def test_basic():
 
     # pprint(recording.detections)
 
+    assert round(recording.duration) == 137
+
     assert len(recording.detections) == 6
     assert len(commandline_results) == 6
 
