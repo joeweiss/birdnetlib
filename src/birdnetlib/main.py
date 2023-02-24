@@ -31,6 +31,7 @@ class Recording:
         self.overlap = 0.0
         self.minimum_confidence = max(0.01, min(min_conf, 0.99))
         self.sample_secs = 3.0
+        self.duration = None
 
     def analyze(self):
         # Compute date to week_48 format as required by current BirdNET analyzers.
@@ -79,6 +80,7 @@ class Recording:
             sig, rate = librosa.load(
                 self.path, sr=sample_rate, mono=True, res_type="kaiser_fast"
             )
+            self.duration = librosa.get_duration(y=sig, sr=sample_rate)
         except audioread.exceptions.NoBackendError as e:
             print(e)
             raise AudioFormatError("Audio format could not be opened.")

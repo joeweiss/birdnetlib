@@ -125,6 +125,9 @@ def test_with_species_list():
         min_conf=min_conf,
     )
     recording.analyze()
+
+    assert recording.duration == 120
+
     pprint(recording.detections)
 
     assert (
