@@ -84,6 +84,12 @@ class Recording:
         except audioread.exceptions.NoBackendError as e:
             print(e)
             raise AudioFormatError("Audio format could not be opened.")
+        except FileNotFoundError as e:
+            print(e)
+            raise e
+        except BaseException as e:
+            print(e)
+            raise AudioFormatError("Generic audio read error occurred from librosa.")
 
         # Split audio into 3-second chunks
 
