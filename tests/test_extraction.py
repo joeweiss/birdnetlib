@@ -27,23 +27,29 @@ def test_extraction():
     )
     recording.analyze()
 
-    """
-    TODO: Remove this comment after feature is defined.
+    # TODO: Remove this comment after feature is defined.
 
-    # Local development tests.
+    # # Local development tests.
     
-    export_dir = os.path.join(os.path.dirname(__file__), "extractions")
+    # export_dir = os.path.join(os.path.dirname(__file__), "extractions")
 
-    # Export to mp3 @ 128k for all detections with min_conf of 0.8.
-    recording.extract_detection_as_audio(
-        directory=export_dir, format="mp3", bitrate="128k", min_conf=0.5
-    )
+    # # Export to mp3 @ 128k for all detections with min_conf of 0.8.
+    # recording.extract_detections_as_audio(
+    #     directory=export_dir, format="mp3", bitrate="128k", min_conf=0.5
+    # )
 
-    """
+    # # Extract spectrograms.
+    # recording.extract_detections_as_spectrogram(
+    #     directory=export_dir, min_conf=0.5, format="jpg"
+    # )
+
+    # return
+
+    # Test audio extractions.
 
     # flac test in temporary test directory.
     with tempfile.TemporaryDirectory() as export_dir:
-        recording.extract_detection_as_audio(directory=export_dir)
+        recording.extract_detections_as_audio(directory=export_dir)
 
         # Check file list.
         files = os.listdir(export_dir)
@@ -71,7 +77,7 @@ def test_extraction():
 
     # wav test in temporary test directory.
     with tempfile.TemporaryDirectory() as export_dir:
-        recording.extract_detection_as_audio(directory=export_dir, format="wav")
+        recording.extract_detections_as_audio(directory=export_dir, format="wav")
 
         # Check file list.
         files = os.listdir(export_dir)
@@ -99,7 +105,7 @@ def test_extraction():
     # mp3 test in temporary test directory (with custom min_conf extraction)
     with tempfile.TemporaryDirectory() as export_dir:
 
-        recording.extract_detection_as_audio(
+        recording.extract_detections_as_audio(
             directory=export_dir,
             format="mp3",
             bitrate="128k",
@@ -124,3 +130,114 @@ def test_extraction():
         audio = pydub.AudioSegment.from_mp3(f"{export_dir}/{files[0]}")
         assert audio.frame_rate == 48000
         assert audio.duration_seconds == 7.0
+
+    # Test spectrogram extractions
+
+    # spectrogram test in temporary test directory (with custom min_conf extraction)
+    with tempfile.TemporaryDirectory() as export_dir:
+
+        recording.extract_detections_as_spectrogram(
+            directory=export_dir,
+            format="jpg",
+            min_conf=0.4,
+            padding_secs=2,
+        )
+
+        # Check file list.
+        files = os.listdir(export_dir)
+        files.sort()
+        expected_files = [
+            "soundscape_40s-47s.jpg",
+            "soundscape_64s-71s.jpg",
+            "soundscape_7s-14s.jpg",
+            "soundscape_82s-89s.jpg",
+        ]
+        expected_files.sort()
+
+        assert files == expected_files
+
+    # spectrogram test in temporary test directory (with custom min_conf extraction)
+    with tempfile.TemporaryDirectory() as export_dir:
+
+        recording.extract_detections_as_spectrogram(
+            directory=export_dir,
+            format="png",
+            min_conf=0.4,
+        )
+
+        # Check file list.
+        files = os.listdir(export_dir)
+        files.sort()
+        expected_files = [
+            "soundscape_42s-45s.png",
+            "soundscape_66s-69s.png",
+            "soundscape_84s-87s.png",
+            "soundscape_9s-12s.png",
+        ]
+        expected_files.sort()
+
+        assert files == expected_files
+
+    # Extract audio and spectrogram.
+
+    with tempfile.TemporaryDirectory() as export_dir:
+
+        recording.extract_detections_as_audio(
+            directory=export_dir,
+            format="mp3",
+            bitrate="128k",
+            padding_secs=2,
+        )
+
+        recording.extract_detections_as_spectrogram(
+            directory=export_dir,
+            format="png",
+            padding_secs=2,
+        )
+
+        # Check file list.
+        files = os.listdir(export_dir)
+        files.sort()
+
+        expected_files = [
+            "soundscape_31s-38s.mp3",
+            "soundscape_31s-38s.png",
+            "soundscape_40s-47s.mp3",
+            "soundscape_40s-47s.png",
+            "soundscape_49s-56s.mp3",
+            "soundscape_49s-56s.png",
+            "soundscape_58s-65s.mp3",
+            "soundscape_58s-65s.png",
+            "soundscape_64s-71s.mp3",
+            "soundscape_64s-71s.png",
+            "soundscape_67s-74s.mp3",
+            "soundscape_67s-74s.png",
+            "soundscape_7s-14s.mp3",
+            "soundscape_7s-14s.png",
+            "soundscape_82s-89s.mp3",
+            "soundscape_82s-89s.png",
+            "soundscape_91s-98s.mp3",
+            "soundscape_91s-98s.png",
+        ]
+        expected_files.sort()
+
+        assert files == expected_files
+        assert len(recording.detections) == 9
+
+        detection = recording.detections[0]
+
+        # Assert confidence (round for slight float variablity across platforms)
+        assert round(detection["confidence"], 3) == 0.507
+
+        del detection["confidence"]
+
+        expected_detection = {
+            "common_name": "House Finch",
+            "end_time": 12.0,
+            "extracted_audio_path": f"{export_dir}/soundscape_7s-14s.mp3",
+            "extracted_spectrogram_path": f"{export_dir}/soundscape_7s-14s.png",
+            "scientific_name": "Haemorhous mexicanus",
+            "start_time": 9.0,
+        }
+
+        assert detection == expected_detection
