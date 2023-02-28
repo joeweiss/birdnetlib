@@ -24,7 +24,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "watchdog==2.1.9"
+    "watchdog==2.1.9",
+    "pydub==0.25.1"
 ]
 
 [project.urls]

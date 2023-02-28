@@ -135,3 +135,6 @@ dmypy.json
 examples/*.mp3
 examples/*.wav
 examples/*/*.wav
+
+examples/flac
+examples/*.flac
