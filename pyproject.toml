@@ -25,7 +25,8 @@ classifiers = [
 ]
 dependencies = [
     "watchdog==2.1.9",
-    "pydub==0.25.1"
+    "pydub==0.25.1",
+    "matplotlib==3.7.0",
 ]
 
 [project.urls]
