@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/birdnetlib.svg)](https://pypi.org/project/birdnetlib/)
 [![Test](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml/badge.svg)](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml)
 
-A python api for BirdNET-Lite and BirdNET-Analyzer
+A python api for BirdNET-Analyzer and BirdNET-Lite
 
 ## Installation
 
@@ -15,7 +15,31 @@ pip install birdnetlib
 
 ## Documentation
 
-`birdnetlib` provides a common interface for BirdNET-Lite and BirdNET-Analyzer.
+`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
+
+### Using BirdNET-Analyzer
+
+To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
+
+```
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+from datetime import datetime
+
+# Load and initialize the BirdNET-Analyzer models.
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    lat=35.4244,
+    lon=-120.7463,
+    date=datetime(year=2022, month=5, day=10), # use date or week_48
+    min_conf=0.25,
+)
+recording.analyze()
+print(recording.detections)
+```
 
 ### Using BirdNET-Lite
 
@@ -54,30 +78,6 @@ print(recording.detections) # Returns list of detections.
   'end_time': 15.0,
   'scientific_name': 'Haemorhous mexicanus',
   'start_time': 12.0}]
-```
-
-### Using BirdNET-Analyzer
-
-To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
-
-```
-from birdnetlib import Recording
-from birdnetlib.analyzer import Analyzer
-from datetime import datetime
-
-# Load and initialize the BirdNET-Analyzer models.
-analyzer = Analyzer()
-
-recording = Recording(
-    analyzer,
-    "sample.mp3",
-    lat=35.4244,
-    lon=-120.7463,
-    date=datetime(year=2022, month=5, day=10), # use date or week_48
-    min_conf=0.25,
-)
-recording.analyze()
-print(recording.detections)
 ```
 
 ### Utility classes
@@ -135,6 +135,7 @@ print(species_list)
 - [Watch a directory for new files, then analyze with multiple analyzer models as files are saved](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_multi_analyzer.py)
 - [Watch a directory for new files, and apply datetimes by parsing file names (eg _2022-08-15-birdnet-21:05:52.wav_) prior to analyzing](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory_date_filenames.py) This example can also be used to modify lat/lon, min_conf, etc., based on file name prior to analyzing.
 - [Limit detections to certain species by passing a predefined species list to the analyzer](https://github.com/joeweiss/birdnetlib/blob/main/examples/predefined_species_list.py) Useful when searching for a particular set of bird detections.
+- [Extract detections as audio file samples](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_and_extract.py) Supports extractions as .flac, .wav and .mp3. Can be filtered to only extract files above a separate minimum confidence value.
 
 ## About BirdNET-Lite and BirdNET-Analyzer
 
@@ -152,7 +153,7 @@ For more information on BirdNET analyzers, please see the project repositories b
 
 ## About `birdnetlib`
 
-`birdnetlib` is maintained by Joe Weiss.
+`birdnetlib` is maintained by Joe Weiss. Contributions are welcome.
 
 ### Project Goals
 

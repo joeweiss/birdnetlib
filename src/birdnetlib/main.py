@@ -1,10 +1,14 @@
 import librosa
 import numpy as np
+import pydub
 from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
 import warnings
 import audioread
 from os import path
 from birdnetlib.utils import return_week_48_from_datetime
+from pathlib import Path
+
+SAMPLE_RATE = 48000
 
 class Recording:
     def __init__(
@@ -32,6 +36,10 @@ class Recording:
         self.minimum_confidence = max(0.01, min(min_conf, 0.99))
         self.sample_secs = 3.0
         self.duration = None
+        self.ndarray = None
+        self.extraction_paths = {}
+        p = Path(self.path)
+        self.filestem = p.stem
 
     def analyze(self):
         # Compute date to week_48 format as required by current BirdNET analyzers.
@@ -66,21 +74,26 @@ class Recording:
                 f"{d.scientific_name}_{d.common_name}" in allow_list
                 or len(allow_list) == 0
             ):
-                qualified_detections.append(d.as_dict)
+                detection = d.as_dict
+
+                # Add extraction paths if available.
+                extraction_key = f"{detection['start_time']}_{detection['end_time']}"
+                file_path = self.extraction_paths.get(extraction_key, None)
+                if file_path:
+                    detection["extraction_path"] = file_path
+                qualified_detections.append(detection)
+
         return qualified_detections
 
-    def read_audio_data(self, sample_rate=48000):
+    def read_audio_data(self):
 
-        # Might be shared between systems, or might not.
-
-        print("READING AUDIO DATA...", end=" ", flush=True)
-
+        print("read_audio_data")
         # Open file with librosa (uses ffmpeg or libav)
         try:
-            sig, rate = librosa.load(
-                self.path, sr=sample_rate, mono=True, res_type="kaiser_fast"
+            self.ndarray, rate = librosa.load(
+                self.path, sr=SAMPLE_RATE, mono=True, res_type="kaiser_fast"
             )
-            self.duration = librosa.get_duration(y=sig, sr=sample_rate)
+            self.duration = librosa.get_duration(y=self.ndarray, sr=SAMPLE_RATE)
         except audioread.exceptions.NoBackendError as e:
             print(e)
             raise AudioFormatError("Audio format could not be opened.")
@@ -98,8 +111,8 @@ class Recording:
         minlen = 1.5
 
         chunks = []
-        for i in range(0, len(sig), int((seconds - self.overlap) * rate)):
-            split = sig[i : i + int(seconds * rate)]
+        for i in range(0, len(self.ndarray), int((seconds - self.overlap) * rate)):
+            split = self.ndarray[i : i + int(seconds * rate)]
 
             # End of signal?
             if len(split) < int(minlen * rate):
@@ -115,7 +128,61 @@ class Recording:
 
         self.chunks = chunks
 
-        print("DONE! READ", str(len(self.chunks)), "CHUNKS.")
+        print("read_audio_data: complete, read ", str(len(self.chunks)), "chunks.")
+
+    def extract_detection_as_audio(
+        self,
+        directory,
+        padding_secs=0,
+        format="flac",
+        bitrate="192k",
+        min_conf=0.0,
+    ):
+        self.extraction_paths = {}  # Clear paths before extraction.
+        for detection in self.detections:
+
+            # Skip if detection is under min_conf parameter.
+            # Useful for reducing the number of extracted detections.
+            if detection["confidence"] < min_conf:
+                continue
+
+            start_sec = int(
+                detection["start_time"] - padding_secs
+                if detection["start_time"] > padding_secs
+                else 0
+            )
+            end_sec = int(
+                detection["end_time"] + padding_secs
+                if detection["end_time"] + padding_secs < self.duration
+                else self.duration
+            )
+
+            extract_array = self.ndarray[
+                start_sec * SAMPLE_RATE : end_sec * SAMPLE_RATE
+            ]
+
+            channels = 1
+            data = np.int16(extract_array * 2**15)  # Normalized to -1, 1
+            audio = pydub.AudioSegment(
+                data.tobytes(),
+                frame_rate=SAMPLE_RATE,
+                sample_width=2,
+                channels=channels,
+            )
+            if format == "mp3":
+                path = f"{directory}/{self.filestem}_{start_sec}s-{end_sec}s.mp3"
+                audio.export(path, format="mp3", bitrate=bitrate)
+            elif format == "wav":
+                path = f"{directory}/{self.filestem}_{start_sec}s-{end_sec}s.wav"
+                audio.export(path, format="wav")
+            else:
+                # flac is default.
+                path = f"{directory}/{self.filestem}_{start_sec}s-{end_sec}s.flac"
+                audio.export(path, format="flac")
+
+            # Save path for detections list.
+            extraction_key = f"{detection['start_time']}_{detection['end_time']}"
+            self.extraction_paths[extraction_key] = path
 
 
 class Detection:

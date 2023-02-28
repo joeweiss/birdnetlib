@@ -10,7 +10,7 @@ exclude = [
 
 [project]
 name = "birdnetlib"
-version = "0.1.0"
+version = "0.2.0"
 authors = [
   { name="Joe Weiss", email="joe.weiss@gmail.com" },
 ]
@@ -24,7 +24,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "watchdog==2.1.9"
+    "watchdog==2.1.9",
+    "pydub==0.25.1"
 ]
 
 [project.urls]
