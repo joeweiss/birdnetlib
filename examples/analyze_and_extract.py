@@ -19,7 +19,7 @@ recording.analyze()
 export_dir = "extractions"  # Directory should already exist.
 
 # Extract to default audio files (.flac)
-recording.extract_detection_as_audio(directory=export_dir)
+recording.extract_detections_as_audio(directory=export_dir)
 
 pprint(recording.detections)
 
@@ -52,7 +52,7 @@ recording.analyze()
 export_dir = "extractions"  # Directory should already exist.
 
 # Extract to .mp3 audio files, only if confidence is > 0.5 with 2 seconds of audio padding.
-recording.extract_detection_as_audio(
+recording.extract_detections_as_audio(
     directory=export_dir, format="mp3", bitrate="192k", min_conf=0.5, padding_secs=2
 )
 
