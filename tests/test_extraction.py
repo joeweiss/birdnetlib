@@ -47,17 +47,20 @@ def test_extraction():
 
         # Check file list.
         files = os.listdir(export_dir)
-        assert files == [
+        files.sort()
+        expected_files = [
+            "soundscape_9s-12s.flac",
             "soundscape_33s-36s.flac",
             "soundscape_69s-72s.flac",
             "soundscape_51s-54s.flac",
-            "soundscape_9s-12s.flac",
             "soundscape_42s-45s.flac",
             "soundscape_60s-63s.flac",
             "soundscape_84s-87s.flac",
             "soundscape_93s-96s.flac",
             "soundscape_66s-69s.flac",
         ]
+        expected_files.sort()
+        assert files == expected_files
 
         # Check that file format is flac, 48000, and correct size.
         with pytest.raises(pydub.exceptions.CouldntDecodeError):
@@ -72,7 +75,9 @@ def test_extraction():
 
         # Check file list.
         files = os.listdir(export_dir)
-        assert files == [
+        files.sort()
+
+        expected_files = [
             "soundscape_9s-12s.wav",
             "soundscape_51s-54s.wav",
             "soundscape_42s-45s.wav",
@@ -83,6 +88,8 @@ def test_extraction():
             "soundscape_33s-36s.wav",
             "soundscape_69s-72s.wav",
         ]
+        expected_files.sort()
+        assert files == expected_files
 
         # Check that file format is wav, 48000, and correct size.
         audio = pydub.AudioSegment.from_wav(f"{export_dir}/{files[0]}")
@@ -102,15 +109,16 @@ def test_extraction():
 
         # Check file list.
         files = os.listdir(export_dir)
-        print("yo")
-        pprint(files)
-
-        assert files == [
+        files.sort()
+        expected_files = [
+            "soundscape_7s-14s.mp3",
             "soundscape_82s-89s.mp3",
             "soundscape_40s-47s.mp3",
-            "soundscape_7s-14s.mp3",
             "soundscape_64s-71s.mp3",
         ]
+        expected_files.sort()
+
+        assert files == expected_files
 
         # Check that file format is mp3, 48000, and 128k bitrate.
         audio = pydub.AudioSegment.from_mp3(f"{export_dir}/{files[0]}")
