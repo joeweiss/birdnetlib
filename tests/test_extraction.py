@@ -199,8 +199,6 @@ def test_extraction():
         files = os.listdir(export_dir)
         files.sort()
 
-        pprint(files)
-
         expected_files = [
             "soundscape_31s-38s.mp3",
             "soundscape_31s-38s.png",
@@ -224,10 +222,7 @@ def test_extraction():
         expected_files.sort()
 
         assert files == expected_files
-
         assert len(recording.detections) == 9
-
-        pprint(recording.detections[0])
 
         expected_detection = {
             "common_name": "House Finch",
