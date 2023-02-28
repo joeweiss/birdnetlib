@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/birdnetlib.svg)](https://pypi.org/project/birdnetlib/)
 [![Test](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml/badge.svg)](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml)
 
-A python api for BirdNET-Lite and BirdNET-Analyzer
+A python api for BirdNET-Analyzer and BirdNET-Lite
 
 ## Installation
 
@@ -15,7 +15,31 @@ pip install birdnetlib
 
 ## Documentation
 
-`birdnetlib` provides a common interface for BirdNET-Lite and BirdNET-Analyzer.
+`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
+
+### Using BirdNET-Analyzer
+
+To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
+
+```
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+from datetime import datetime
+
+# Load and initialize the BirdNET-Analyzer models.
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    lat=35.4244,
+    lon=-120.7463,
+    date=datetime(year=2022, month=5, day=10), # use date or week_48
+    min_conf=0.25,
+)
+recording.analyze()
+print(recording.detections)
+```
 
 ### Using BirdNET-Lite
 
@@ -54,30 +78,6 @@ print(recording.detections) # Returns list of detections.
   'end_time': 15.0,
   'scientific_name': 'Haemorhous mexicanus',
   'start_time': 12.0}]
-```
-
-### Using BirdNET-Analyzer
-
-To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
-
-```
-from birdnetlib import Recording
-from birdnetlib.analyzer import Analyzer
-from datetime import datetime
-
-# Load and initialize the BirdNET-Analyzer models.
-analyzer = Analyzer()
-
-recording = Recording(
-    analyzer,
-    "sample.mp3",
-    lat=35.4244,
-    lon=-120.7463,
-    date=datetime(year=2022, month=5, day=10), # use date or week_48
-    min_conf=0.25,
-)
-recording.analyze()
-print(recording.detections)
 ```
 
 ### Utility classes
