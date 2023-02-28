@@ -227,7 +227,7 @@ def test_extraction():
         detection = recording.detections[0]
 
         # Assert confidence (round for slight float variablity across platforms)
-        assert round(detection["confidence"], 7) == 0.5066996
+        assert round(detection["confidence"], 3) == 0.507
 
         del detection["confidence"]
 
