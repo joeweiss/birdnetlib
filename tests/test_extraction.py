@@ -224,9 +224,15 @@ def test_extraction():
         assert files == expected_files
         assert len(recording.detections) == 9
 
+        detection = recording.detections[0]
+
+        # Assert confidence (round for slight float variablity across platforms)
+        assert round(detection["confidence"], 7) == 0.5066996
+
+        del detection["confidence"]
+
         expected_detection = {
             "common_name": "House Finch",
-            "confidence": 0.5066996216773987,
             "end_time": 12.0,
             "extracted_audio_path": f"{export_dir}/soundscape_7s-14s.mp3",
             "extracted_spectrogram_path": f"{export_dir}/soundscape_7s-14s.png",
@@ -234,4 +240,4 @@ def test_extraction():
             "start_time": 9.0,
         }
 
-        assert expected_detection == recording.detections[0]
+        assert detection == expected_detection
