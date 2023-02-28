@@ -38,8 +38,8 @@ class Recording:
         self.sample_secs = 3.0
         self.duration = None
         self.ndarray = None
-        self.extraction_audio_paths = {}
-        self.extraction_spectrogram_paths = {}
+        self.extracted_audio_paths = {}
+        self.extracted_spectrogram_paths = {}
 
         p = Path(self.path)
         self.filestem = p.stem
@@ -81,9 +81,14 @@ class Recording:
 
                 # Add extraction paths if available.
                 extraction_key = f"{detection['start_time']}_{detection['end_time']}"
-                file_path = self.extraction_audio_paths.get(extraction_key, None)
-                if file_path:
-                    detection["extraction_path"] = file_path
+                audio_file_path = self.extracted_audio_paths.get(extraction_key, None)
+                if audio_file_path:
+                    detection["extracted_audio_path"] = audio_file_path
+                spectrogram_file_path = self.extracted_spectrogram_paths.get(
+                    extraction_key, None
+                )
+                if spectrogram_file_path:
+                    detection["extracted_spectrogram_path"] = spectrogram_file_path
                 qualified_detections.append(detection)
 
         return qualified_detections
@@ -141,7 +146,7 @@ class Recording:
         bitrate="192k",
         min_conf=0.0,
     ):
-        self.extraction_audio_paths = {}  # Clear paths before extraction.
+        self.extracted_audio_paths = {}  # Clear paths before extraction.
         for detection in self.detections:
 
             # Skip if detection is under min_conf parameter.
@@ -185,12 +190,12 @@ class Recording:
 
             # Save path for detections list.
             extraction_key = f"{detection['start_time']}_{detection['end_time']}"
-            self.extraction_audio_paths[extraction_key] = path
+            self.extracted_audio_paths[extraction_key] = path
 
     def extract_detections_as_spectrogram(
         self, directory, padding_secs=0, min_conf=0.0, top=14000, format="jpg", dpi=144
     ):
-        self.extraction_spectrogram_paths = {}  # Clear paths before extraction.
+        self.extracted_spectrogram_paths = {}  # Clear paths before extraction.
         for detection in self.detections:
 
             # Skip if detection is under min_conf parameter.
@@ -225,7 +230,7 @@ class Recording:
             extraction_spectrogram_key = (
                 f"{detection['start_time']}_{detection['end_time']}"
             )
-            self.extraction_spectrogram_paths[extraction_spectrogram_key] = path
+            self.extracted_spectrogram_paths[extraction_spectrogram_key] = path
 
 
 class Detection:

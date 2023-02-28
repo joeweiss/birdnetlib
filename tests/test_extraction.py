@@ -186,14 +186,12 @@ def test_extraction():
             directory=export_dir,
             format="mp3",
             bitrate="128k",
-            min_conf=0.4,
             padding_secs=2,
         )
 
         recording.extract_detections_as_spectrogram(
             directory=export_dir,
             format="png",
-            min_conf=0.4,
             padding_secs=2,
         )
 
@@ -201,16 +199,44 @@ def test_extraction():
         files = os.listdir(export_dir)
         files.sort()
 
+        pprint(files)
+
         expected_files = [
+            "soundscape_31s-38s.mp3",
+            "soundscape_31s-38s.png",
             "soundscape_40s-47s.mp3",
             "soundscape_40s-47s.png",
+            "soundscape_49s-56s.mp3",
+            "soundscape_49s-56s.png",
+            "soundscape_58s-65s.mp3",
+            "soundscape_58s-65s.png",
             "soundscape_64s-71s.mp3",
             "soundscape_64s-71s.png",
+            "soundscape_67s-74s.mp3",
+            "soundscape_67s-74s.png",
             "soundscape_7s-14s.mp3",
             "soundscape_7s-14s.png",
             "soundscape_82s-89s.mp3",
             "soundscape_82s-89s.png",
+            "soundscape_91s-98s.mp3",
+            "soundscape_91s-98s.png",
         ]
         expected_files.sort()
 
         assert files == expected_files
+
+        assert len(recording.detections) == 9
+
+        pprint(recording.detections[0])
+
+        expected_detection = {
+            "common_name": "House Finch",
+            "confidence": 0.5066996216773987,
+            "end_time": 12.0,
+            "extracted_audio_path": f"{export_dir}/soundscape_7s-14s.mp3",
+            "extracted_spectrogram_path": f"{export_dir}/soundscape_7s-14s.png",
+            "scientific_name": "Haemorhous mexicanus",
+            "start_time": 9.0,
+        }
+
+        assert expected_detection == recording.detections[0]
