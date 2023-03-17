@@ -8,7 +8,6 @@ from os import path
 from birdnetlib.utils import return_week_48_from_datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
-import time
 
 SAMPLE_RATE = 48000
 
@@ -220,16 +219,12 @@ class Recording:
             ]
 
             path = f"{directory}/{self.filestem}_{start_sec}s-{end_sec}s.{format}"
-            print(path)
-            start = time.time()
             plt.specgram(extract_array, Fs=SAMPLE_RATE)
             plt.ylim(top=top)
             plt.ylabel("frequency kHz")
             plt.title(f"{self.filename} ({start_sec}s - {end_sec}s)", fontsize=10)
             plt.savefig(path, dpi=dpi)
             plt.close()
-
-            print(time.time() - start)
 
             # Save path for detections list.
             extraction_spectrogram_key = (
