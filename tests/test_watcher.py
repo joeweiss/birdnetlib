@@ -35,8 +35,8 @@ def test_watcher_complete():
 def preparser(recording):
     # Used to modify the recording object before analyzing.
     filename = recording.filename
-    # 2022-08-15-birdnet-21:05:51.wav, as an example, use BirdNET-Pi's preferred format for testing.
-    dt = datetime.strptime(filename, "%Y-%m-%d-birdnet-%H:%M:%S.wav")
+    # 2022-08-15-21-05-51.wav, as an example, a file containing the datetime.
+    dt = datetime.strptime(filename, "%Y-%m-%d-%H-%M-%S.wav")
     # Modify the recording object here as needed.
     # For testing, we're changing the date, lon and lat.
     recording.date = dt
@@ -51,7 +51,7 @@ def test_watcher_date_preparser_parser():
     watcher = DirectoryWatcher(directory, analyzers=[analyzer])
 
     input_path = os.path.join(
-        os.path.dirname(__file__), "test_files/2022-08-15-birdnet-21:05:51.wav"
+        os.path.dirname(__file__), "test_files/2022-08-15-21-05-51.wav"
     )
 
     watcher.recording_preanalyze = preparser
