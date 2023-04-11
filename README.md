@@ -9,7 +9,7 @@ A python api for BirdNET-Analyzer and BirdNET-Lite
 
 `birdnetlib` requires Python 3.7+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
 
-```
+```bash
 pip install birdnetlib
 ```
 
@@ -21,7 +21,7 @@ pip install birdnetlib
 
 To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
 
-```
+```python
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
 from datetime import datetime
@@ -45,7 +45,7 @@ print(recording.detections)
 
 To use the BirdNET-Lite model, use the `LiteAnalyzer` class.
 
-```
+```python
 from birdnetlib import Recording
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from datetime import datetime
@@ -67,7 +67,7 @@ print(recording.detections) # Returns list of detections.
 
 `recording.detections` contains a list of detected species, along with time ranges and confidence value.
 
-```
+```bash
 [{'common_name': 'House Finch',
   'confidence': 0.5744,
   'end_time': 12.0,
@@ -86,7 +86,7 @@ print(recording.detections) # Returns list of detections.
 
 `DirectoryAnalyzer` can process a directory and analyze contained files.
 
-```
+```python
 def on_analyze_complete(recording):
     print(recording.path)
     pprint(recording.detections)
@@ -105,7 +105,7 @@ See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples
 
 `DirectoryWatcher` can watch a directory and analyze new files as they are created.
 
-```
+```python
 def on_analyze_complete(recording):
     print(recording.path)
     pprint(recording.detections)
@@ -121,7 +121,7 @@ See the [full example](https://github.com/joeweiss/birdnetlib/blob/main/examples
 
 `SpeciesList` uses BirdNET-Analyzer to predict species lists from location and date.
 
-```
+```python
 species = SpeciesList()
 species_list = species.return_list(
     lon=-120.7463, lat=35.4244, date=datetime(year=2022, month=5, day=10)
