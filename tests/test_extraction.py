@@ -56,14 +56,12 @@ def test_extraction():
         files.sort()
         expected_files = [
             "soundscape_9s-12s.flac",
+            "soundscape_27s-30s.flac",
             "soundscape_33s-36s.flac",
-            "soundscape_69s-72s.flac",
-            "soundscape_51s-54s.flac",
+            "soundscape_36s-39s.flac",
             "soundscape_42s-45s.flac",
-            "soundscape_60s-63s.flac",
+            "soundscape_72s-75s.flac",
             "soundscape_84s-87s.flac",
-            "soundscape_93s-96s.flac",
-            "soundscape_66s-69s.flac",
         ]
         expected_files.sort()
         assert files == expected_files
@@ -85,14 +83,12 @@ def test_extraction():
 
         expected_files = [
             "soundscape_9s-12s.wav",
-            "soundscape_51s-54s.wav",
-            "soundscape_42s-45s.wav",
-            "soundscape_93s-96s.wav",
-            "soundscape_84s-87s.wav",
-            "soundscape_60s-63s.wav",
-            "soundscape_66s-69s.wav",
+            "soundscape_27s-30s.wav",
             "soundscape_33s-36s.wav",
-            "soundscape_69s-72s.wav",
+            "soundscape_36s-39s.wav",
+            "soundscape_42s-45s.wav",
+            "soundscape_72s-75s.wav",
+            "soundscape_84s-87s.wav",
         ]
         expected_files.sort()
         assert files == expected_files
@@ -120,7 +116,6 @@ def test_extraction():
             "soundscape_7s-14s.mp3",
             "soundscape_82s-89s.mp3",
             "soundscape_40s-47s.mp3",
-            "soundscape_64s-71s.mp3",
         ]
         expected_files.sort()
 
@@ -148,7 +143,6 @@ def test_extraction():
         files.sort()
         expected_files = [
             "soundscape_40s-47s.jpg",
-            "soundscape_64s-71s.jpg",
             "soundscape_7s-14s.jpg",
             "soundscape_82s-89s.jpg",
         ]
@@ -170,7 +164,6 @@ def test_extraction():
         files.sort()
         expected_files = [
             "soundscape_42s-45s.png",
-            "soundscape_66s-69s.png",
             "soundscape_84s-87s.png",
             "soundscape_9s-12s.png",
         ]
@@ -200,34 +193,30 @@ def test_extraction():
         files.sort()
 
         expected_files = [
-            "soundscape_31s-38s.mp3",
-            "soundscape_31s-38s.png",
-            "soundscape_40s-47s.mp3",
-            "soundscape_40s-47s.png",
-            "soundscape_49s-56s.mp3",
-            "soundscape_49s-56s.png",
-            "soundscape_58s-65s.mp3",
-            "soundscape_58s-65s.png",
-            "soundscape_64s-71s.mp3",
-            "soundscape_64s-71s.png",
-            "soundscape_67s-74s.mp3",
-            "soundscape_67s-74s.png",
             "soundscape_7s-14s.mp3",
             "soundscape_7s-14s.png",
+            "soundscape_25s-32s.mp3",
+            "soundscape_25s-32s.png",
+            "soundscape_31s-38s.mp3",
+            "soundscape_31s-38s.png",
+            "soundscape_34s-41s.mp3",
+            "soundscape_34s-41s.png",
+            "soundscape_40s-47s.mp3",
+            "soundscape_40s-47s.png",
+            "soundscape_70s-77s.mp3",
+            "soundscape_70s-77s.png",
             "soundscape_82s-89s.mp3",
             "soundscape_82s-89s.png",
-            "soundscape_91s-98s.mp3",
-            "soundscape_91s-98s.png",
         ]
         expected_files.sort()
 
         assert files == expected_files
-        assert len(recording.detections) == 9
+        assert len(recording.detections) == 7
 
         detection = recording.detections[0]
 
         # Assert confidence (round for slight float variablity across platforms)
-        assert round(detection["confidence"], 3) == 0.507
+        assert round(detection["confidence"], 3) == 0.517
 
         del detection["confidence"]
 

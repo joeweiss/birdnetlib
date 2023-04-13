@@ -30,7 +30,7 @@ def test_watcher_complete():
     analyzer_recording = watcher.on_analyze_complete.call_args_list[0][0][0]
     lite_recording = watcher.on_analyze_complete.call_args_list[1][0][0]
 
-    assert len(analyzer_recording.detections) == 31
+    assert len(analyzer_recording.detections) == 27
     assert analyzer_recording.analyzer.name == "Analyzer"
     assert len(lite_recording.detections) == 2
     assert lite_recording.analyzer.name == "LiteAnalyzer"
