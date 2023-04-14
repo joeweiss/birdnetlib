@@ -10,7 +10,7 @@ exclude = [
 
 [project]
 name = "birdnetlib"
-version = "0.4.0"
+version = "0.4.1"
 authors = [
   { name="Joe Weiss", email="joe.weiss@gmail.com" },
 ]
@@ -26,7 +26,7 @@ classifiers = [
 dependencies = [
     "watchdog==2.1.9",
     "pydub==0.25.1",
-    "matplotlib==3.5.3",
+    "matplotlib>=3.5.3",
 ]
 
 [project.urls]
