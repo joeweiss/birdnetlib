@@ -1,1 +1,1 @@
-from birdnetlib.main import Recording, Detection
+from birdnetlib.main import Recording, Detection, MultiProcessRecording
