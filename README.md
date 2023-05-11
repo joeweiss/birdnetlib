@@ -48,7 +48,6 @@ To use the a [model trained with BirdNET-Analyzer](https://github.com/kahst/Bird
 ```python
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
-from datetime import datetime
 
 # Load and initialize BirdNET-Analyzer with your own model/labels.
 
@@ -64,9 +63,6 @@ analyzer = Analyzer()
 recording = Recording(
     analyzer,
     "sample.mp3",
-    lat=35.4244,
-    lon=-120.7463,
-    date=datetime(year=2022, month=5, day=10), # use date or week_48
     min_conf=0.25,
 )
 recording.analyze()
