@@ -23,9 +23,9 @@ class DirectoryAnalyzer:
         if len(analyzers) > 0:
             self.analyzers = analyzers
         else:
-            from birdnetlib.analyzer_lite import LiteAnalyzer
+            from birdnetlib.analyzer import Analyzer
 
-            self.analyzers = [LiteAnalyzer()]
+            self.analyzers = [Analyzer()]
 
         # Configuration values for Recording object.
         # Do not norm these values here; let Recording handle them.

@@ -108,4 +108,4 @@ def test_default_analyzer():
 
     directory = "."
     watcher = DirectoryWatcher(directory)
-    assert type(watcher.analyzers[0]).__name__ == "LiteAnalyzer"
+    assert type(watcher.analyzers[0]).__name__ == "Analyzer"

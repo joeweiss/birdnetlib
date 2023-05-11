@@ -1,5 +1,5 @@
 from birdnetlib.batch import DirectoryAnalyzer
-from birdnetlib.analyzer_lite import LiteAnalyzer
+from birdnetlib.analyzer import Analyzer
 from datetime import datetime
 from pprint import pprint
 
@@ -15,7 +15,7 @@ def on_error(recording, error):
 
 
 print("Starting Analyzer")
-analyzer = LiteAnalyzer()
+analyzer = Analyzer()
 
 
 print("Starting Watcher")
