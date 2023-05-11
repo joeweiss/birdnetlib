@@ -104,9 +104,10 @@ def test_batch_with_custom_classifiers():
 
     # Note, we're using the BirdNET_GLOBAL_3K_V2.3 as the "custom" classifier.
     custom_model_path = MODEL_PATH
-    custom_label_path = LABEL_PATH
+    custom_labels_path = LABEL_PATH
     analyzer = Analyzer(
-        classifier_label_path=custom_label_path, classifier_model_path=custom_model_path
+        classifier_labels_path=custom_labels_path,
+        classifier_model_path=custom_model_path,
     )
 
     with tempfile.TemporaryDirectory() as input_dir:

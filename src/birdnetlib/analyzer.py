@@ -51,7 +51,7 @@ class Analyzer:
         self,
         custom_species_list_path=None,
         classifier_model_path=None,
-        classifier_label_path=None,
+        classifier_labels_path=None,
     ):
         self.name = "Analyzer"
         self.model_name = "BirdNET-Analyzer"
@@ -65,7 +65,7 @@ class Analyzer:
         self.custom_species_list = []
 
         self.classifier_model_path = classifier_model_path
-        self.classifier_label_path = classifier_label_path
+        self.classifier_labels_path = classifier_labels_path
 
         self.load_model()
         self.load_labels()
@@ -228,9 +228,9 @@ class Analyzer:
 
     def load_labels(self):
         labels_file_path = LABEL_PATH
-        if self.classifier_label_path:
+        if self.classifier_labels_path:
             print("loading custom classifier labels")
-            labels_file_path = self.classifier_label_path
+            labels_file_path = self.classifier_labels_path
         labels = []
         with open(labels_file_path, "r") as lfile:
             for line in lfile.readlines():

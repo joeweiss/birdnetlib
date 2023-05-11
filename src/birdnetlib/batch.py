@@ -120,7 +120,7 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                     Analyzer(
                         custom_species_list_path=i["custom_species_list_path"],
                         classifier_model_path=i["classifier_model_path"],
-                        classifier_label_path=i["classifier_label_path"],
+                        classifier_labels_path=i["classifier_labels_path"],
                     )
                 )
 
@@ -235,8 +235,8 @@ class DirectoryMultiProcessingAnalyzer:
             analyzer_args = [
                 {
                     "model_name": i.model_name,
-                    "classifier_label_path": i.classifier_label_path
-                    if hasattr(i, "classifier_label_path")
+                    "classifier_labels_path": i.classifier_labels_path
+                    if hasattr(i, "classifier_labels_path")
                     else None,
                     "classifier_model_path": i.classifier_model_path
                     if hasattr(i, "classifier_model_path")
