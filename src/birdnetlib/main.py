@@ -9,6 +9,7 @@ from birdnetlib.utils import return_week_48_from_datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
 
+
 SAMPLE_RATE = 48000
 
 class Recording:
@@ -92,6 +93,19 @@ class Recording:
                 qualified_detections.append(detection)
 
         return qualified_detections
+
+    @property
+    def as_dict(self):
+        config = {
+            "model_name": self.analyzer.model_name,
+            "week_48": self.week_48,
+            "date": self.date,
+            "sensitivity": self.sensitivity,
+            "lat": self.lat,
+            "lon": self.lon,
+            "minimum_confidence": self.minimum_confidence,
+        }
+        return {"path": self.path, "config": config, "detections": self.detections}
 
     def read_audio_data(self):
 
@@ -231,6 +245,20 @@ class Recording:
                 f"{detection['start_time']}_{detection['end_time']}"
             )
             self.extracted_spectrogram_paths[extraction_spectrogram_key] = path
+
+
+class MultiProcessRecording:
+
+    """Stub class for multiprocessing recording results."""
+
+    def __init__(
+        self, path=None, config=None, detections=[], error=False, error_message=None
+    ):
+        self.path = path
+        self.config = config
+        self.detections = detections
+        self.error = error
+        self.error_message = error_message
 
 
 class Detection:
