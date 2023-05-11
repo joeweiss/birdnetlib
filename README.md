@@ -58,8 +58,6 @@ analyzer = Analyzer(
     classifier_labels_path=custom_labels_path, classifier_model_path=custom_model_path
 )
 
-analyzer = Analyzer()
-
 recording = Recording(
     analyzer,
     "sample.mp3",
