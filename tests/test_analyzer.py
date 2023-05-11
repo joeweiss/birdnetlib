@@ -1,5 +1,5 @@
 from birdnetlib import Recording
-from birdnetlib.analyzer import Analyzer
+from birdnetlib.analyzer import Analyzer, MODEL_PATH, LABEL_PATH
 
 from pprint import pprint
 import pytest
@@ -154,6 +154,58 @@ def test_with_species_list():
             min_conf=min_conf,
         )
         recording.analyze()
+
+
+def test_with_custom_classifier():
+
+    # Process file with command line utility, then process with python library and ensure equal commandline_results.
+
+    input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
+    min_conf = 0.25
+    lon = -120.7463
+    lat = 35.4244
+    week_48 = 18
+
+    # Note, we're using the BirdNET_GLOBAL_3K_V2.3 as the "custom" classifier.
+
+    custom_model_path = MODEL_PATH
+    custom_label_path = LABEL_PATH
+
+    analyzer = Analyzer(
+        classifier_label_path=custom_label_path, classifier_model_path=custom_model_path
+    )
+
+    recording = Recording(
+        analyzer,
+        input_path,
+        lon=lon,
+        lat=lat,
+        week_48=week_48,
+        min_conf=min_conf,
+    )
+    recording.analyze()
+
+    # Ensure that there is no BirdNET generated species list (from lon/lat or week)
+    # Custom classifiers do not use BirdNET generated species list as labels will likely not match.
+    assert analyzer.custom_species_list == []
+
+    assert len(recording.detections) == 12
+
+    detected_birds = [i["common_name"] for i in recording.detections]
+    assert detected_birds == [
+        "Black-capped Chickadee",
+        "Black-capped Chickadee",
+        "House Finch",
+        "Blue Jay",
+        "Blue Jay",
+        "Dark-eyed Junco",
+        "Dark-eyed Junco",
+        "Dark-eyed Junco",
+        "Dark-eyed Junco",
+        "Black-capped Chickadee",
+        "House Finch",
+        "House Finch",
+    ]
 
 
 def test_species_list_calls():
