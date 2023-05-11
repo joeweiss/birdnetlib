@@ -47,7 +47,12 @@ class Detection:
 
 
 class Analyzer:
-    def __init__(self, custom_species_list_path=None):
+    def __init__(
+        self,
+        custom_species_list_path=None,
+        classifier_model_path=None,
+        classifier_labels_path=None,
+    ):
         self.name = "Analyzer"
         self.model_name = "BirdNET-Analyzer"
         self.interpreter = None
@@ -58,6 +63,10 @@ class Analyzer:
         self.labels = []
         self.results = []
         self.custom_species_list = []
+
+        self.classifier_model_path = classifier_model_path
+        self.classifier_labels_path = classifier_labels_path
+
         self.load_model()
         self.load_labels()
 
@@ -164,7 +173,7 @@ class Analyzer:
             )
 
         # If recording has lon/lat, load cached list or predict a new species list.
-        if recording.lon and recording.lat:
+        if recording.lon and recording.lat and self.classifier_model_path == None:
             print("recording has lon/lat")
             self.set_predicted_species_list_from_position(recording)
 
@@ -197,6 +206,9 @@ class Analyzer:
         print("load model")
         # Load TFLite model and allocate tensors.
         model_path = MODEL_PATH
+        if self.classifier_model_path:
+            print("loading custom classifier model")
+            model_path = self.classifier_model_path
         num_threads = 1  # Default from BN-A config
         self.interpreter = tflite.Interpreter(
             model_path=model_path, num_threads=num_threads
@@ -216,6 +228,9 @@ class Analyzer:
 
     def load_labels(self):
         labels_file_path = LABEL_PATH
+        if self.classifier_labels_path:
+            print("loading custom classifier labels")
+            labels_file_path = self.classifier_labels_path
         labels = []
         with open(labels_file_path, "r") as lfile:
             for line in lfile.readlines():
