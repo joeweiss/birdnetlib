@@ -207,6 +207,7 @@ class Analyzer:
         # Load TFLite model and allocate tensors.
         model_path = MODEL_PATH
         if self.classifier_model_path:
+            print("loading custom classifier model")
             model_path = self.classifier_model_path
         num_threads = 1  # Default from BN-A config
         self.interpreter = tflite.Interpreter(
@@ -228,6 +229,7 @@ class Analyzer:
     def load_labels(self):
         labels_file_path = LABEL_PATH
         if self.classifier_label_path:
+            print("loading custom classifier labels")
             labels_file_path = self.classifier_label_path
         labels = []
         with open(labels_file_path, "r") as lfile:

@@ -117,7 +117,11 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                 from birdnetlib.analyzer import Analyzer
 
                 analyzers.append(
-                    Analyzer(custom_species_list_path=i["custom_species_list_path"])
+                    Analyzer(
+                        custom_species_list_path=i["custom_species_list_path"],
+                        classifier_model_path=i["classifier_model_path"],
+                        classifier_label_path=i["classifier_label_path"],
+                    )
                 )
 
     recordings = []
@@ -231,6 +235,12 @@ class DirectoryMultiProcessingAnalyzer:
             analyzer_args = [
                 {
                     "model_name": i.model_name,
+                    "classifier_label_path": i.classifier_label_path
+                    if hasattr(i, "classifier_label_path")
+                    else None,
+                    "classifier_model_path": i.classifier_model_path
+                    if hasattr(i, "classifier_model_path")
+                    else None,
                     "custom_species_list_path": i.custom_species_list_path,
                 }
                 for i in self.analyzers
