@@ -41,6 +41,38 @@ recording.analyze()
 print(recording.detections)
 ```
 
+### Using a custom classifier with BirdNET-Analyzer
+
+To use the a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), use the `Analyzer` class.
+
+```python
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+from datetime import datetime
+
+# Load and initialize BirdNET-Analyzer with your own model/labels.
+
+custom_model_path = "custom_classifiers/trogoniformes.tflite"
+custom_labels_path = "custom_classifiers/trogoniformes.txt"
+
+analyzer = Analyzer(
+    classifier_labels_path=custom_labels_path, classifier_model_path=custom_model_path
+)
+
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    lat=35.4244,
+    lon=-120.7463,
+    date=datetime(year=2022, month=5, day=10), # use date or week_48
+    min_conf=0.25,
+)
+recording.analyze()
+print(recording.detections)
+```
+
 ### Using BirdNET-Lite
 
 To use the BirdNET-Lite model, use the `LiteAnalyzer` class.
