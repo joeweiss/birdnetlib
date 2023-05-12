@@ -41,9 +41,24 @@ recording.analyze()
 print(recording.detections)
 ```
 
+`recording.detections` contains a list of detected species, along with time ranges and confidence value.
+
+```bash
+[{'common_name': 'House Finch',
+  'confidence': 0.5744,
+  'end_time': 12.0,
+  'scientific_name': 'Haemorhous mexicanus',
+  'start_time': 9.0},
+ {'common_name': 'House Finch',
+  'confidence': 0.4496,
+  'end_time': 15.0,
+  'scientific_name': 'Haemorhous mexicanus',
+  'start_time': 12.0}]
+```
+
 ### Using a custom classifier with BirdNET-Analyzer
 
-To use the a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), use the `Analyzer` class.
+To use a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), pass your labels and model path to the `Analyzer` class.
 
 ```python
 from birdnetlib import Recording
@@ -69,7 +84,7 @@ print(recording.detections)
 
 ### Using BirdNET-Lite
 
-To use the BirdNET-Lite model, use the `LiteAnalyzer` class.
+To use the legacy BirdNET-Lite model, use the `LiteAnalyzer` class.
 
 ```python
 from birdnetlib import Recording
@@ -89,21 +104,6 @@ recording = Recording(
 )
 recording.analyze()
 print(recording.detections) # Returns list of detections.
-```
-
-`recording.detections` contains a list of detected species, along with time ranges and confidence value.
-
-```bash
-[{'common_name': 'House Finch',
-  'confidence': 0.5744,
-  'end_time': 12.0,
-  'scientific_name': 'Haemorhous mexicanus',
-  'start_time': 9.0},
- {'common_name': 'House Finch',
-  'confidence': 0.4496,
-  'end_time': 15.0,
-  'scientific_name': 'Haemorhous mexicanus',
-  'start_time': 12.0}]
 ```
 
 ### Utility classes
