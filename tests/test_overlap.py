@@ -6,7 +6,8 @@ import pytest
 import os
 import tempfile
 import csv
-from unittest.mock import patch
+from collections import Counter
+
 
 # Overlapping detections are when the library returns more than one detection for the same (3 sec) piece of audio.
 # We want to ensure that birdnetlib isn't filtering out these overlapping detections, or prematurely
@@ -17,10 +18,7 @@ def test_without_species_list():
 
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
-    lon = -120.7463
-    lat = 35.4244
-    week_48 = 18
-    min_conf = 0.1
+    min_conf = 0.0  # Irresponsibly low, just for testing.
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
 
     tf = tempfile.NamedTemporaryFile(suffix=".csv")
@@ -29,7 +27,8 @@ def test_without_species_list():
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
 
-    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf} --rtype=csv"
+    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --rtype=csv"
+
     print(cmd)
     os.system(f"cd {birdnet_analyzer_path}; {cmd}")
 
@@ -59,35 +58,30 @@ def test_without_species_list():
     recording = Recording(
         analyzer,
         input_path,
-        lat=lat,
-        lon=lon,
-        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()
-    pprint(recording.detections)
 
     # Check that birdnetlib results match command line results.
     assert len(recording.detections) == len(commandline_results)
-    assert (
-        len(analyzer.custom_species_list) == 130
-    )  # Check that this matches the number printed by the cli version.
 
     # Check that detection confidence is float.
     assert type(recording.detections[0]["confidence"]) is float
 
+    # groups
+    start_times = [i["start_time"] for i in recording.detections]
+    item_counts = Counter(start_times)
+    assert item_counts[48.0] == 15
+
     # Ensure that multiple detections exist for 57-60 seconds.
     overlapping = [i for i in recording.detections if i["start_time"] == 57.0]
-    assert len(overlapping) == 2
+    assert len(overlapping) == 15
 
 
 def test_with_species_list():
 
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
-    lon = -120.7463
-    lat = 35.4244
-    week_48 = 18
     min_conf = 0.1
     input_path = os.path.join(os.path.dirname(__file__), "test_files/soundscape.wav")
     custom_list_path = os.path.join(
@@ -129,15 +123,11 @@ def test_with_species_list():
     recording = Recording(
         analyzer,
         input_path,
-        week_48=week_48,
         min_conf=min_conf,
     )
     recording.analyze()
 
     assert recording.duration == 120
-
-    pprint(recording.detections)
-
     assert (
         commandline_results[0]["common_name"] == recording.detections[0]["common_name"]
     )
@@ -156,6 +146,11 @@ def test_with_species_list():
     assert len(overlapping) == 2
 
     # Run a recording with lat/lon and throw an error when used with custom species list.
+
+    lon = -120.7463
+    lat = 35.4244
+    week_48 = 18
+
     with pytest.raises(ValueError):
         recording = Recording(
             analyzer,

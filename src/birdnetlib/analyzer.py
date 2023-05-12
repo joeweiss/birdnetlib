@@ -192,8 +192,8 @@ class Analyzer:
                 p_labels.items(), key=operator.itemgetter(1), reverse=True
             )
 
-            # Store top 5 results and advance indicies
-            results[str(start) + "-" + str(end)] = p_sorted[:5]
+            # Store results
+            results[str(start) + "-" + str(end)] = p_sorted
 
             # Increment start and end
             start += recording.sample_secs - recording.overlap
