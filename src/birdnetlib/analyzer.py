@@ -50,6 +50,7 @@ class Analyzer:
     def __init__(
         self,
         custom_species_list_path=None,
+        custom_species_list=None,
         classifier_model_path=None,
         classifier_labels_path=None,
     ):
@@ -72,12 +73,18 @@ class Analyzer:
 
         self.cached_species_lists = {}
         self.custom_species_list_path = None
+        self.has_custom_species_list = False
 
         self.species_class = SpeciesList()
 
         if custom_species_list_path:
+            self.has_custom_species_list = True
             self.custom_species_list_path = custom_species_list_path
             self.load_custom_list()
+
+        if custom_species_list:
+            self.has_custom_species_list = True
+            self.custom_species_list = custom_species_list
 
     @property
     def detections(self):
@@ -167,9 +174,9 @@ class Analyzer:
     def analyze_recording(self, recording):
         print("analyze_recording", recording.path)
 
-        if self.custom_species_list_path and recording.lon and recording.lat:
+        if self.has_custom_species_list and recording.lon and recording.lat:
             raise ValueError(
-                "Recording lon/lat should not be used in conjunction with a custom species list."
+                "Recording lon/lat should not be used in conjunction with a custom species list or path."
             )
 
         # If recording has lon/lat, load cached list or predict a new species list.
