@@ -25,7 +25,7 @@ LABEL_PATH = os.path.join(os.path.dirname(__file__), "models/lite/labels.txt")
 
 
 class LiteAnalyzer:
-    def __init__(self, custom_species_list_path=None):
+    def __init__(self, custom_species_list_path=None, custom_species_list=None):
         self.name = "LiteAnalyzer"
         self.model_name = "BirdNET-Lite"
         self.interpreter = None
@@ -41,6 +41,9 @@ class LiteAnalyzer:
         self.load_lite_model()
         if self.custom_species_list_path:
             self.load_custom_list()
+
+        if custom_species_list:
+            self.custom_species_list = custom_species_list
 
     def load_lite_model(self):
         self.interpreter = tflite.Interpreter(model_path=MODEL_PATH)
