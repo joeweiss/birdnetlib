@@ -199,6 +199,9 @@ class Analyzer:
                 p_labels.items(), key=operator.itemgetter(1), reverse=True
             )
 
+            # Filter by recording.minimum_confidence so not to needlessly store full 8K array for each chunk.
+            p_sorted = [i for i in p_sorted if i[1] >= recording.minimum_confidence]
+
             # Store results
             results[str(start) + "-" + str(end)] = p_sorted
 
