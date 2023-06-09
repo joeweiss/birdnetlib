@@ -216,7 +216,6 @@ class Analyzer:
             )
 
             # Filter by recording.minimum_confidence so not to needlessly store full 8K array for each chunk.
-            # print(p_sorted)
             p_sorted = [i for i in p_sorted if i[1] >= recording.minimum_confidence]
 
             # Store results
