@@ -16,11 +16,11 @@ from birdnetlib.species import SpeciesList
 
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
-    "models/analyzer/BirdNET_GLOBAL_3K_V2.3_Model_FP32.tflite",
+    "models/analyzer/BirdNET_GLOBAL_6K_V2.4_Model_FP32.tflite",
 )
 
 LABEL_PATH = os.path.join(
-    os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_3K_V2.3_Labels.txt"
+    os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_6K_V2.4_Labels.txt"
 )
 
 
@@ -61,15 +61,28 @@ class Analyzer:
         self.output_details = None
         self.input_layer_index = None
         self.output_layer_index = None
+
+        self.custom_interpreter = None
+        self.custom_input_details = None
+        self.custom_output_details = None
+        self.custom_input_layer_index = None
+        self.custom_output_layer_index = None
+
         self.labels = []
         self.results = []
         self.custom_species_list = []
 
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
+        self.use_custom_classifier = (
+            self.classifier_labels_path and self.classifier_labels_path
+        )
 
-        self.load_model()
+        if self.use_custom_classifier:
+            self.load_custom_models()
+
         self.load_labels()
+        self.load_model()
 
         self.cached_species_lists = {}
         self.custom_species_list_path = None
@@ -189,7 +202,10 @@ class Analyzer:
         results = {}
         for c in recording.chunks:
 
-            pred = self.predict(c)[0]
+            if self.use_custom_classifier:
+                pred = self.predict_with_custom_classifier(c)[0]
+            else:
+                pred = self.predict(c)[0]
 
             # Assign scores to labels
             p_labels = dict(zip(self.labels, pred))
@@ -213,12 +229,9 @@ class Analyzer:
         recording.detection_list = self.detections
 
     def load_model(self):
-        print("load model")
+        print("load model", not self.use_custom_classifier)
         # Load TFLite model and allocate tensors.
         model_path = MODEL_PATH
-        if self.classifier_model_path:
-            print("loading custom classifier model")
-            model_path = self.classifier_model_path
         num_threads = 1  # Default from BN-A config
         self.interpreter = tflite.Interpreter(
             model_path=model_path, num_threads=num_threads
@@ -231,7 +244,12 @@ class Analyzer:
 
         # Get input tensor index
         self.input_layer_index = self.input_details[0]["index"]
-        self.output_layer_index = self.output_details[0]["index"]
+
+        # Get classification output or feature embeddings
+        if self.use_custom_classifier:
+            self.output_layer_index = self.output_details[0]["index"] - 1
+        else:
+            self.output_layer_index = self.output_details[0]["index"]
 
         print("Model loaded.")
 
@@ -258,3 +276,74 @@ class Analyzer:
 
         self.custom_species_list = species_list
         print(len(species_list), "species loaded.")
+
+    # Custom models.
+
+    def predict_with_custom_classifier(self, sample):
+        # print("predict_with_custom_classifier")
+
+        data = np.array([sample], dtype="float32")
+        # print(data[0])
+
+        # Make a prediction (Audio only for now)
+        INTERPRETER = self.interpreter
+        INPUT_LAYER_INDEX = self.input_layer_index
+        OUTPUT_LAYER_INDEX = self.output_layer_index
+
+        INTERPRETER.resize_tensor_input(INPUT_LAYER_INDEX, [len(data), *data[0].shape])
+        INTERPRETER.allocate_tensors()
+
+        # Extract feature embeddings
+        INTERPRETER.set_tensor(INPUT_LAYER_INDEX, np.array(data, dtype="float32"))
+        INTERPRETER.invoke()
+        features = INTERPRETER.get_tensor(OUTPUT_LAYER_INDEX)
+
+        feature_vector = features
+
+        C_INTERPRETER = self.custom_interpreter
+        C_INPUT_LAYER_INDEX = self.custom_input_layer_index
+        C_OUTPUT_LAYER_INDEX = self.custom_output_layer_index
+
+        C_INTERPRETER.resize_tensor_input(
+            C_INPUT_LAYER_INDEX, [len(feature_vector), *feature_vector[0].shape]
+        )
+        C_INTERPRETER.allocate_tensors()
+
+        # Make a prediction
+        C_INTERPRETER.set_tensor(
+            C_INPUT_LAYER_INDEX, np.array(feature_vector, dtype="float32")
+        )
+        C_INTERPRETER.invoke()
+        prediction = C_INTERPRETER.get_tensor(C_OUTPUT_LAYER_INDEX)
+
+        # print(prediction)
+
+        # Logits or sigmoid activations?
+        APPLY_SIGMOID = True
+        if APPLY_SIGMOID:
+            SIGMOID_SENSITIVITY = 1.0
+            prediction = self.flat_sigmoid(
+                np.array(prediction), sensitivity=-SIGMOID_SENSITIVITY
+            )
+
+        return prediction
+
+    def load_custom_models(self):
+        print("load_custom_models")
+        # Load TFLite model and allocate tensors.
+        model_path = self.classifier_model_path
+        num_threads = 1  # Default from BN-A config
+        self.custom_interpreter = tflite.Interpreter(
+            model_path=model_path, num_threads=num_threads
+        )
+        self.custom_interpreter.allocate_tensors()
+
+        # Get input and output tensors.
+        self.custom_input_details = self.custom_interpreter.get_input_details()
+        self.custom_output_details = self.custom_interpreter.get_output_details()
+
+        # Get input tensor index
+        self.custom_input_layer_index = self.custom_input_details[0]["index"]
+        self.custom_output_layer_index = self.custom_output_details[0]["index"]
+
+        print("Custom model loaded.")

@@ -71,11 +71,11 @@ def test_without_species_list():
     # groups
     start_times = [i["start_time"] for i in recording.detections]
     item_counts = Counter(start_times)
-    assert item_counts[48.0] == 15
+    assert item_counts[48.0] == 9
 
     # Ensure that multiple detections exist for 57-60 seconds.
     overlapping = [i for i in recording.detections if i["start_time"] == 57.0]
-    assert len(overlapping) == 15
+    assert len(overlapping) == 10
 
 
 def test_with_species_list():
@@ -143,7 +143,7 @@ def test_with_species_list():
 
     # Ensure that multiple detections exist for 57-60 seconds.
     overlapping = [i for i in recording.detections if i["start_time"] == 57.0]
-    assert len(overlapping) == 2
+    assert len(overlapping) == 1
 
     # Run a recording with lat/lon and throw an error when used with custom species list.
 
