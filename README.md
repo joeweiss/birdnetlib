@@ -7,7 +7,7 @@ A python api for BirdNET-Analyzer and BirdNET-Lite
 
 ## Installation
 
-`birdnetlib` requires Python 3.7+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
+`birdnetlib` requires Python 3.9+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
 
 ```bash
 pip install birdnetlib
