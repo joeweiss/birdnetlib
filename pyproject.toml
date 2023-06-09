@@ -17,7 +17,7 @@ authors = [
 description = "A python api for BirdNET-Lite and BirdNET-Analyzer"
 readme = "README.md"
 license = "GPL-3.0"
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
