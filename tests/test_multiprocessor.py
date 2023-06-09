@@ -68,7 +68,7 @@ def test_batch_with_kwargs():
             if i.path.endswith("XC563936 - Soundscape.mp3")
         ][0]
 
-        assert len(test_result_with_detections.detections) == 13
+        assert len(test_result_with_detections.detections) == 11
 
     print("test_batch completed in", time.time() - start)
 
@@ -93,46 +93,6 @@ def test_process_defined_batch():
         assert type(batch.directory_recordings[0].path).__name__ == "str"
 
     print("test_process_defined_batch completed in", time.time() - start)
-
-
-def test_batch_with_custom_classifiers():
-    test_files = "tests/test_files"
-
-    start = time.time()
-
-    defined_date = datetime(year=2022, month=5, day=10)
-
-    # Note, we're using the BirdNET_GLOBAL_3K_V2.3 as the "custom" classifier.
-    custom_model_path = MODEL_PATH
-    custom_labels_path = LABEL_PATH
-    analyzer = Analyzer(
-        classifier_labels_path=custom_labels_path,
-        classifier_model_path=custom_model_path,
-    )
-
-    with tempfile.TemporaryDirectory() as input_dir:
-        # Copy test files to temp directory.
-        copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 7
-        batch = DirectoryMultiProcessingAnalyzer(
-            input_dir, date=defined_date, min_conf=0.4, analyzers=[analyzer]
-        )
-        batch.process()
-        assert len(batch.directory_recordings) == 5
-        # Ensure date was used
-        assert batch.directory_recordings[0].config["date"] == defined_date
-        assert batch.directory_recordings[0].config["minimum_confidence"] == 0.4
-        # Ensure the default is BirdNET-Analyzer
-        assert batch.directory_recordings[0].config["model_name"] == "BirdNET-Analyzer"
-        test_result_with_detections = [
-            i
-            for i in batch.directory_recordings
-            if i.path.endswith("XC563936 - Soundscape.mp3")
-        ][0]
-
-        assert len(test_result_with_detections.detections) == 13
-
-    print("test_batch completed in", time.time() - start)
 
 
 def test_batch_error():

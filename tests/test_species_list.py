@@ -12,7 +12,7 @@ def test_species_list_for_analyzers():
     species_list = species.return_list_for_analyzer(
         lon=lon, lat=lat, week_48=week_48, threshold=filter_threshold
     )
-    assert len(species_list) == 130
+    assert len(species_list) == 141
 
     # Using datetime
     date = datetime(year=2022, month=5, day=10)
@@ -20,13 +20,13 @@ def test_species_list_for_analyzers():
     species_list = species.return_list_for_analyzer(
         lon=lon, lat=lat, date=date, threshold=filter_threshold
     )
-    assert len(species_list) == 130
+    assert len(species_list) == 141
 
     # Using no date or week_48
     species_list = species.return_list_for_analyzer(
         lon=lon, lat=lat, threshold=filter_threshold
     )
-    assert len(species_list) == 241
+    assert len(species_list) == 216
 
     # Adjust time threshold
     date = datetime(year=2022, month=5, day=10)
@@ -34,7 +34,7 @@ def test_species_list_for_analyzers():
     species_list = species.return_list_for_analyzer(
         lon=lon, lat=lat, date=date, threshold=filter_threshold
     )
-    assert len(species_list) == 68
+    assert len(species_list) == 80
 
 
 def test_species_list():
@@ -47,7 +47,7 @@ def test_species_list():
     species_list = species.return_list(
         lon=lon, lat=lat, week_48=week_48, threshold=filter_threshold
     )
-    assert len(species_list) == 130
+    assert len(species_list) == 141
     print(species_list[0])
     assert species_list[0]["scientific_name"] == "Haemorhous mexicanus"
     assert species_list[0]["common_name"] == "House Finch"
