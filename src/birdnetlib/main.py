@@ -23,6 +23,7 @@ class Recording:
         lat=None,
         lon=None,
         min_conf=0.1,
+        overlap=0.0,
     ):
         self.path = path
         self.analyzer = analyzer
@@ -34,7 +35,7 @@ class Recording:
         self.sensitivity = max(0.5, min(1.0 - (sensitivity - 1.0), 1.5))
         self.lat = lat
         self.lon = lon
-        self.overlap = 0.0
+        self.overlap = overlap
         self.minimum_confidence = max(0.01, min(min_conf, 0.99))
         self.sample_secs = 3.0
         self.duration = None
