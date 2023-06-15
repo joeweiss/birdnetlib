@@ -14,14 +14,18 @@ import numpy as np
 import math
 import time
 import operator
+import requests
 
 from birdnetlib import Detection
-
 
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__), "models/lite/BirdNET_6K_GLOBAL_MODEL.tflite"
 )
 LABEL_PATH = os.path.join(os.path.dirname(__file__), "models/lite/labels.txt")
+
+
+MODEL_URL = "https://github.com/joeweiss/birdnetlib/raw/main/src/birdnetlib/models/lite/BirdNET_6K_GLOBAL_MODEL.tflite"
+LABEL_URL = "https://github.com/joeweiss/birdnetlib/raw/main/src/birdnetlib/models/lite/labels.txt"
 
 
 class LiteAnalyzer:
@@ -38,12 +42,39 @@ class LiteAnalyzer:
         self.custom_species_list = []
         self.custom_species_list_path = custom_species_list_path
 
+        self.model_download_was_required = False
+        self.check_for_model_files()
+
         self.load_lite_model()
         if self.custom_species_list_path:
             self.load_custom_list()
 
         if custom_species_list:
             self.custom_species_list = custom_species_list
+
+    def check_for_model_files(self):
+        # Necessitated by PyPI's limit of 100MB per library.
+        # This check will only download the file once.
+        if not os.path.exists(MODEL_PATH):
+            print("BirdNET-Lite model is missing. Downloading now.")
+            response = requests.get(MODEL_URL)
+            if response.status_code == 200:
+                with open(MODEL_PATH, "wb") as file:
+                    file.write(response.content)
+                print("BirdNET-Lite model downloaded successfully.")
+                self.model_download_was_required = True
+            else:
+                print("Failed to download the file.")
+
+        if not os.path.exists(LABEL_PATH):
+            print("BirdNET-Lite labels are missing. Downloading now.")
+            response = requests.get(LABEL_URL)
+            if response.status_code == 200:
+                with open(LABEL_PATH, "wb") as file:
+                    file.write(response.content)
+                print("BirdNET-Lite labels downloaded successfully.")
+            else:
+                print("Failed to download the file.")
 
     def load_lite_model(self):
         self.interpreter = tflite.Interpreter(model_path=MODEL_PATH)
