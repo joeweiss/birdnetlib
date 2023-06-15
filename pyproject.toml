@@ -5,7 +5,8 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.sdist]
 exclude = [
   "/dev",
-  "/tests"
+  "/tests",
+  "/src/birdnetlib/models/lite"
 ]
 
 [project]
