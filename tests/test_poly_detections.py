@@ -9,8 +9,8 @@ import csv
 from collections import Counter
 
 
-# Overlapping detections are when the library returns more than one detection for the same (3 sec) piece of audio.
-# We want to ensure that birdnetlib isn't filtering out these overlapping detections, or prematurely
+# "Poly" (is there a better term?) detections are when the library returns more than one detection for the same (3 sec) piece of audio.
+# We want to ensure that birdnetlib isn't filtering out these detections, or prematurely
 # filtering or ranking them.
 
 
