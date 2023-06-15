@@ -86,12 +86,15 @@ print(recording.detections)
 
 To use the legacy BirdNET-Lite model, use the `LiteAnalyzer` class.
 
+Note: The BirdNET-Lite project has been [deprecated](https://github.com/kahst/BirdNET-Lite). The BirdNET-Lite model is no longer included in the PyPi `birdnetlib` package. This model and label file will be downloaded and installed the first time the `LiteAnalyzer` is initialized in your Python environment.
+
 ```python
 from birdnetlib import Recording
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from datetime import datetime
 
 # Load and initialize the BirdNET-Lite models.
+# If this is the first time using LiteAnalyzer, the model will be downloaded into your Python environment.
 analyzer = LiteAnalyzer()
 
 recording = Recording(
