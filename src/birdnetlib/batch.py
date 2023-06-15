@@ -17,6 +17,7 @@ class DirectoryAnalyzer:
         lat=None,
         lon=None,
         min_conf=0.1,
+        overlap=0.0,
         patterns=["*.mp3", "*.wav"],
     ):
         self.directory = directory
@@ -35,6 +36,7 @@ class DirectoryAnalyzer:
         self.lat = lat
         self.lon = lon
         self.min_conf = min_conf
+        self.overlap = overlap
         self.directory_recordings = []
         self.patterns = patterns
 
@@ -68,6 +70,7 @@ class DirectoryAnalyzer:
                     lat=self.lat,
                     lon=self.lon,
                     min_conf=self.min_conf,
+                    overlap=self.overlap,
                 )
                 # Preparse if method is available.
                 self.recording_preanalyze(recording)
@@ -136,6 +139,7 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                 lat=recording_config.get("lat", None),
                 lon=recording_config.get("lon", None),
                 min_conf=recording_config.get("minimum_confidence", 0.1),
+                overlap=recording_config.get("overlap", 0.0),
             )
             recording.analyze()
             recordings.append(recording.as_dict)
@@ -167,6 +171,7 @@ class DirectoryMultiProcessingAnalyzer:
         lat=None,
         lon=None,
         min_conf=0.1,
+        overlap=0.0,
         patterns=["*.mp3", "*.wav"],
         processes=None,
     ):
@@ -186,6 +191,7 @@ class DirectoryMultiProcessingAnalyzer:
         self.lat = lat
         self.lon = lon
         self.min_conf = min_conf
+        self.overlap = overlap
         self.directory_recordings = []
         self.patterns = patterns
         self.errors = []
@@ -257,6 +263,7 @@ class DirectoryMultiProcessingAnalyzer:
                     lat=self.lat,
                     lon=self.lon,
                     min_conf=self.min_conf,
+                    overlap=self.overlap,
                 )
 
                 shared_queue.put((recording.__dict__, analyzer_args))

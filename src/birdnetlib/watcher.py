@@ -20,6 +20,7 @@ class DirectoryWatcher:
         lat=None,
         lon=None,
         min_conf=0.1,
+        overlap=0.0,
         use_polling=False,
     ):
         self.directory = directory
@@ -38,6 +39,7 @@ class DirectoryWatcher:
         self.lat = lat
         self.lon = lon
         self.min_conf = min_conf
+        self.overlap = overlap
         self.use_polling = use_polling
 
     def on_analyze_complete(self, recording):
@@ -68,6 +70,7 @@ class DirectoryWatcher:
                     lat=self.lat,
                     lon=self.lon,
                     min_conf=self.min_conf,
+                    overlap=self.overlap,
                 )
                 # Preparse if method is available.
                 self.recording_preanalyze(recording)
