@@ -73,6 +73,8 @@ class Analyzer:
         self.results = []
         self.custom_species_list = []
 
+        self.fetch_embeddings = fetch_embeddings
+        
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
         self.use_custom_classifier = (
@@ -205,7 +207,7 @@ class Analyzer:
 
             if self.use_custom_classifier:
                 pred = self.predict_with_custom_classifier(c)[0]
-            elif fetch_embeddings:
+            elif self.fetch_embeddings:
                 features = self.predict_with_custom_classifier(c)[0]
                 return features
             else:
@@ -303,7 +305,7 @@ class Analyzer:
         features = INTERPRETER.get_tensor(OUTPUT_LAYER_INDEX)
 
         feature_vector = features
-        if fetch_embedding:
+        if self.fetch_embedding:
             return features
             
         C_INTERPRETER = self.custom_interpreter
