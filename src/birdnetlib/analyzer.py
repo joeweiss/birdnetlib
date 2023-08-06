@@ -73,13 +73,10 @@ class Analyzer:
         self.results = []
         self.custom_species_list = []
         
-        print(fetch_embeddings)
         if fetch_embeddings:
             self.fetch_embeddings = True
         else:
             self.fetch_embeddings = False
-        self.fetch_embeddings = True
-        print(self.fetch_embeddings)
         
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
@@ -209,13 +206,15 @@ class Analyzer:
         start = 0
         end = recording.sample_secs
         results = {}
+        features = []
         for c in recording.chunks:
 
             if self.use_custom_classifier:
                 pred = self.predict_with_custom_classifier(c)[0]
-            elif self.fetch_embeddings == True :
-                features = self.predict_with_custom_classifier(c)[0]
-                return features
+            elif self.fetch_embeddings == True:
+            	feature = self.predict_with_custom_classifier(c)
+            	features.append(feature)
+            	continue
             else:
                 pred = self.predict(c)[0]
 
@@ -238,7 +237,9 @@ class Analyzer:
             end = start + recording.sample_secs
 
         self.results = results
+        self.features_list = features
         recording.detection_list = self.detections
+        recording.features_list = self.features_list
 
     def load_model(self):
         print("load model", not self.use_custom_classifier)
@@ -258,7 +259,7 @@ class Analyzer:
         self.input_layer_index = self.input_details[0]["index"]
 
         # Get classification output or feature embeddings
-        if self.use_custom_classifier:
+        if self.use_custom_classifier or self.fetch_embeddings:
             self.output_layer_index = self.output_details[0]["index"] - 1
         else:
             self.output_layer_index = self.output_details[0]["index"]
@@ -312,7 +313,7 @@ class Analyzer:
 
         feature_vector = features
         if self.fetch_embeddings:
-            return features
+            return feature_vector
             
         C_INTERPRETER = self.custom_interpreter
         C_INPUT_LAYER_INDEX = self.custom_input_layer_index
