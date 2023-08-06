@@ -53,7 +53,7 @@ class Analyzer:
         custom_species_list=None,
         classifier_model_path=None,
         classifier_labels_path=None,
-        fetch_embeddings=False
+        fetch_embeddings=None,
     ):
         self.name = "Analyzer"
         self.model_name = "BirdNET-Analyzer"
@@ -305,7 +305,7 @@ class Analyzer:
         features = INTERPRETER.get_tensor(OUTPUT_LAYER_INDEX)
 
         feature_vector = features
-        if self.fetch_embedding:
+        if self.fetch_embeddings:
             return features
             
         C_INTERPRETER = self.custom_interpreter
