@@ -73,7 +73,7 @@ class Analyzer:
         self.results = []
         self.custom_species_list = []
 
-        if fetch_embeddings=="1":
+        if fetch_embeddings==1:
             self.fetch_embeddings = True
         else
             self.fetch_embeddings = False
@@ -210,7 +210,7 @@ class Analyzer:
 
             if self.use_custom_classifier:
                 pred = self.predict_with_custom_classifier(c)[0]
-            elif self.fetch_embeddings:
+            elif self.fetch_embeddings == True :
                 features = self.predict_with_custom_classifier(c)[0]
                 return features
             else:
