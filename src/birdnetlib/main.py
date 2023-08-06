@@ -29,6 +29,7 @@ class Recording:
         self.analyzer = analyzer
         self.detections_dict = {}  # Old format
         self.detection_list = []
+        self.features_list = []
         self.analyzed = False
         self.week_48 = week_48
         self.date = date
@@ -94,6 +95,9 @@ class Recording:
                 qualified_detections.append(detection)
 
         return qualified_detections
+    @property
+    def features(self):
+    	return self.features_list
 
     @property
     def as_dict(self):
