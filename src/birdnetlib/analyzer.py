@@ -75,7 +75,7 @@ class Analyzer:
 
         if fetch_embeddings==1:
             self.fetch_embeddings = True
-        else
+        else:
             self.fetch_embeddings = False
         
         self.classifier_model_path = classifier_model_path
