@@ -78,6 +78,7 @@ class Analyzer:
             self.fetch_embeddings = True
         else:
             self.fetch_embeddings = False
+        self.fetch_embeddings = True
         print(self.fetch_embeddings)
         
         self.classifier_model_path = classifier_model_path
