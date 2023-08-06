@@ -72,11 +72,13 @@ class Analyzer:
         self.labels = []
         self.results = []
         self.custom_species_list = []
-
-        if fetch_embeddings==1:
+        
+        print(fetch_embeddings)
+        if fetch_embeddings:
             self.fetch_embeddings = True
         else:
             self.fetch_embeddings = False
+        print(self.fetch_embeddings)
         
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
