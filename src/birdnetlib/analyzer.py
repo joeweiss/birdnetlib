@@ -185,7 +185,7 @@ class Analyzer:
         self.cached_species_lists[list_key] = species_list
 
     def analyze_recording(self, recording):
-        print("analyze_recording", recording.path)
+        print("analyze_recording", recording.filename)
 
         if self.has_custom_species_list and recording.lon and recording.lat:
             raise ValueError(
