@@ -12,6 +12,7 @@ import matplotlib.pyplot as plt
 
 SAMPLE_RATE = 48000
 
+
 class RecordingBase:
     def __init__(
         self,
@@ -99,7 +100,7 @@ class RecordingBase:
         }
         return {"path": self.path, "config": config, "detections": self.detections}
 
-    def process_audio_data(self,rate):
+    def process_audio_data(self, rate):
         # Split audio into 3-second chunks
 
         # Split signal with overlap
@@ -136,7 +137,6 @@ class RecordingBase:
     ):
         self.extracted_audio_paths = {}  # Clear paths before extraction.
         for detection in self.detections:
-
             # Skip if detection is under min_conf parameter.
             # Useful for reducing the number of extracted detections.
             if detection["confidence"] < min_conf:
@@ -185,7 +185,6 @@ class RecordingBase:
     ):
         self.extracted_spectrogram_paths = {}  # Clear paths before extraction.
         for detection in self.detections:
-
             # Skip if detection is under min_conf parameter.
             # Useful for reducing the number of extracted detections.
             if detection["confidence"] < min_conf:
@@ -220,6 +219,7 @@ class RecordingBase:
             )
             self.extracted_spectrogram_paths[extraction_spectrogram_key] = path
 
+
 class Recording(RecordingBase):
     def __init__(
         self,
@@ -236,14 +236,15 @@ class Recording(RecordingBase):
         self.path = path
         p = Path(self.path)
         self.filestem = p.stem
-        super().__init__(analyzer,week_48,date,sensitivity,lat,lon,min_conf,overlap)    
+        super().__init__(
+            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+        )
 
     @property
     def filename(self):
         return path.basename(self.path)
 
     def read_audio_data(self):
-
         print("read_audio_data")
         # Open file with librosa (uses ffmpeg or libav)
         try:
@@ -263,6 +264,7 @@ class Recording(RecordingBase):
 
         self.process_audio_data(rate)
 
+
 class RecordingBuffer(RecordingBase):
     def __init__(
         self,
@@ -279,7 +281,9 @@ class RecordingBuffer(RecordingBase):
     ):
         self.buffer = buffer
         self.rate = rate
-        super().__init__(analyzer,week_48,date,sensitivity,lat,lon,min_conf,overlap)    
+        super().__init__(
+            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+        )
 
     @property
     def filename(self):
@@ -287,7 +291,7 @@ class RecordingBuffer(RecordingBase):
 
     def read_audio_data(self):
         self.ndarray = self.buffer
-        self.duration = len(self.ndarray)/self.rate
+        self.duration = len(self.ndarray) / self.rate
         self.process_audio_data(self.rate)
 
 
