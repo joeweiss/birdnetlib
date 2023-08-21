@@ -12,11 +12,10 @@ import matplotlib.pyplot as plt
 
 SAMPLE_RATE = 48000
 
-class Recording:
+class RecordingBase:
     def __init__(
         self,
         analyzer,
-        path,
         week_48=-1,
         date=None,
         sensitivity=1.0,
@@ -25,7 +24,6 @@ class Recording:
         min_conf=0.1,
         overlap=0.0,
     ):
-        self.path = path
         self.analyzer = analyzer
         self.detections_dict = {}  # Old format
         self.detection_list = []
@@ -43,9 +41,6 @@ class Recording:
         self.extracted_audio_paths = {}
         self.extracted_spectrogram_paths = {}
 
-        p = Path(self.path)
-        self.filestem = p.stem
-
     def analyze(self):
         # Compute date to week_48 format as required by current BirdNET analyzers.
         # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
@@ -60,10 +55,6 @@ class Recording:
         self.read_audio_data()
         self.analyzer.analyze_recording(self)
         self.analyzed = True
-
-    @property
-    def filename(self):
-        return path.basename(self.path)
 
     @property
     def detections(self):
@@ -108,25 +99,7 @@ class Recording:
         }
         return {"path": self.path, "config": config, "detections": self.detections}
 
-    def read_audio_data(self):
-
-        print("read_audio_data")
-        # Open file with librosa (uses ffmpeg or libav)
-        try:
-            self.ndarray, rate = librosa.load(
-                self.path, sr=SAMPLE_RATE, mono=True, res_type="kaiser_fast"
-            )
-            self.duration = librosa.get_duration(y=self.ndarray, sr=SAMPLE_RATE)
-        except audioread.exceptions.NoBackendError as e:
-            print(e)
-            raise AudioFormatError("Audio format could not be opened.")
-        except FileNotFoundError as e:
-            print(e)
-            raise e
-        except BaseException as e:
-            print(e)
-            raise AudioFormatError("Generic audio read error occurred from librosa.")
-
+    def process_audio_data(self,rate):
         # Split audio into 3-second chunks
 
         # Split signal with overlap
@@ -246,6 +219,76 @@ class Recording:
                 f"{detection['start_time']}_{detection['end_time']}"
             )
             self.extracted_spectrogram_paths[extraction_spectrogram_key] = path
+
+class Recording(RecordingBase):
+    def __init__(
+        self,
+        analyzer,
+        path,
+        week_48=-1,
+        date=None,
+        sensitivity=1.0,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
+        overlap=0.0,
+    ):
+        self.path = path
+        p = Path(self.path)
+        self.filestem = p.stem
+        super().__init__(analyzer,week_48,date,sensitivity,lat,lon,min_conf,overlap)    
+
+    @property
+    def filename(self):
+        return path.basename(self.path)
+
+    def read_audio_data(self):
+
+        print("read_audio_data")
+        # Open file with librosa (uses ffmpeg or libav)
+        try:
+            self.ndarray, rate = librosa.load(
+                self.path, sr=SAMPLE_RATE, mono=True, res_type="kaiser_fast"
+            )
+            self.duration = librosa.get_duration(y=self.ndarray, sr=SAMPLE_RATE)
+        except audioread.exceptions.NoBackendError as e:
+            print(e)
+            raise AudioFormatError("Audio format could not be opened.")
+        except FileNotFoundError as e:
+            print(e)
+            raise e
+        except BaseException as e:
+            print(e)
+            raise AudioFormatError("Generic audio read error occurred from librosa.")
+
+        self.process_audio_data(rate)
+
+class RecordingBuffer(RecordingBase):
+    def __init__(
+        self,
+        analyzer,
+        buffer,
+        rate,
+        week_48=-1,
+        date=None,
+        sensitivity=1.0,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
+        overlap=0.0,
+    ):
+        self.buffer = buffer
+        self.rate = rate
+        super().__init__(analyzer,week_48,date,sensitivity,lat,lon,min_conf,overlap)    
+
+    @property
+    def filename(self):
+        return "buffer"
+
+    def read_audio_data(self):
+        self.ndarray = self.buffer
+        self.duration = len(self.ndarray)/self.rate
+        self.process_audio_data(self.rate)
 
 
 class MultiProcessRecording:
