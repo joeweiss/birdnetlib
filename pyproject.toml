@@ -11,17 +11,17 @@ exclude = [
 
 [project]
 name = "birdnetlib"
-version = "0.8.0"
+version = "0.9.0"
 authors = [
   { name="Joe Weiss", email="joe.weiss@gmail.com" },
 ]
 description = "A python api for BirdNET-Lite and BirdNET-Analyzer"
 readme = "README.md"
-license = "GPL-3.0"
+license = {text = "Apache-2.0"}
 requires-python = ">=3.9"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
 ]
 dependencies = [
