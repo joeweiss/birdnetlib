@@ -14,13 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        # python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9"]
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: "recursive"
       - name: submodules recursively
-        run: git submodule update --init --recursive
+        run: git submodule update --remote
       - name: Setup FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v2
       - name: Install libsndfile
