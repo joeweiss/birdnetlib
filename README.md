@@ -19,7 +19,7 @@ pip install birdnetlib
 
 ### Using BirdNET-Analyzer
 
-To use the newer BirdNET-Analyzer model, use the `Analyzer` class.
+To use the latest BirdNET-Analyzer model, use the `Analyzer` class.
 
 ```python
 from birdnetlib import Recording
@@ -55,6 +55,18 @@ print(recording.detections)
   'scientific_name': 'Haemorhous mexicanus',
   'start_time': 12.0}]
 ```
+
+### Using specific versions of BirdNET-Analyzer
+
+To use a specific version of BirdNET-Analyzer model, pass the version to the `Analyzer` class.
+
+```python
+# Load and initialize the BirdNET-Analyzer 2.3 model.
+analyzer = Analyzer(version="2.3")
+
+```
+
+Note: `birdnetlib` is compatible with BirdNET-Analyzer model versions 2.1 and higher. For more information on specific versions of BirdNET-Analyzer, see their [model version history](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints).
 
 ### Using a custom classifier with BirdNET-Analyzer
 

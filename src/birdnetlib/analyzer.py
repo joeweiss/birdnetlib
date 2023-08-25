@@ -1,5 +1,6 @@
 from multiprocessing.sharedctypes import Value
 import os
+from datetime import datetime
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
@@ -11,14 +12,20 @@ except:
 
 import numpy as np
 import operator
+import requests
+from pathlib import Path
+import json
 
 from birdnetlib.species import SpeciesList
+from pprint import pprint
 
+# TODO: Update these values on every new model release.
+MODEL_VERSION = "2.4"  # This is the default model that is installed with the library.
+MODEL_RELEASE_DATE = datetime(year=2023, month=6, day=1)
 MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "models/analyzer/BirdNET_GLOBAL_6K_V2.4_Model_FP32.tflite",
 )
-
 LABEL_PATH = os.path.join(
     os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_6K_V2.4_Labels.txt"
 )
@@ -53,6 +60,7 @@ class Analyzer:
         custom_species_list=None,
         classifier_model_path=None,
         classifier_labels_path=None,
+        version=None,
     ):
         self.name = "Analyzer"
         self.model_name = "BirdNET-Analyzer"
@@ -71,6 +79,19 @@ class Analyzer:
         self.labels = []
         self.results = []
         self.custom_species_list = []
+
+        # Set model versions.
+        self.model_path = MODEL_PATH
+        self.label_path = LABEL_PATH
+        self.version = str(version if version else MODEL_VERSION)
+
+        if self.version == MODEL_VERSION:
+            self.version_date = MODEL_RELEASE_DATE
+
+        self.model_download_was_required = False
+        if self.version != MODEL_VERSION:
+            # Download version dynamically if there's a match.
+            self.check_for_model_files()
 
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
@@ -98,6 +119,105 @@ class Analyzer:
         if custom_species_list:
             self.has_custom_species_list = True
             self.custom_species_list = custom_species_list
+
+    def check_for_model_files(self):
+        # Check if the models have already been downloaded.
+        version_model_path = os.path.join(
+            os.path.dirname(__file__),
+            f"models/analyzer/{self.version}/Model_FP32.tflite",
+        )
+        print(version_model_path)
+
+        version_labels_path = os.path.join(
+            os.path.dirname(__file__),
+            f"models/analyzer/{self.version}/Labels.txt",
+        )
+        print(version_labels_path)
+
+        version_metadata_path = os.path.join(
+            os.path.dirname(__file__),
+            f"models/analyzer/{self.version}/metadata.json",
+        )
+        print(version_metadata_path)
+
+        if (
+            os.path.exists(version_model_path)
+            and os.path.exists(version_labels_path)
+            and os.path.exists(version_metadata_path)
+        ):
+            print(f"{self.version} Model and Labels are loaded.")
+            self.model_path = version_model_path
+            self.label_path = version_labels_path
+            # Set the version_date.
+            with open(version_metadata_path, "r") as openfile:
+                version_data = json.load(openfile)
+                # Set version_date from metadata.
+                self.version_date = datetime.strptime(version_data["date"], "%Y-%m-%d")
+            return
+
+        # Not downloaded, see if there is a match online.
+        versions_root = (
+            "https://raw.githubusercontent.com/joeweiss/birdnet-models-nc-sa/main"
+        )
+        versions_endpoint = f"{versions_root}/versions.json"
+        response = requests.get(versions_endpoint)
+        version_data = None
+        if response.status_code == 200:
+            # print(response.json())
+            data = response.json()
+            version_data = next(
+                (i for i in data if i["version"] == str(self.version)), None
+            )
+            pprint(version_data)
+        else:
+            print("Failed to download versions file.")
+
+        if not version_data:
+            raise Exception("No matching version could be found.")
+
+        # Make the models directories.
+        version_dir = f"models/analyzer/{version_data['version']}/"
+        model_directory = os.path.join(
+            os.path.dirname(__file__),
+            version_dir,
+        )
+
+        # Make the model directory if needed.
+        Path(model_directory).mkdir(parents=True, exist_ok=True)
+
+        # Save metadata file.
+        with open(version_metadata_path, "w") as file:
+            file.write(json.dumps(version_data, indent=4))
+
+        # Set version_date from metadata.
+        self.version_date = datetime.strptime(version_data["date"], "%Y-%m-%d")
+
+        # Download the model.
+        model_url = f"{versions_root}/{version_data['model_fp32']}"
+        if not os.path.exists(version_model_path):
+            print("BirdNET version model is missing. Downloading now.")
+            response = requests.get(model_url)
+            if response.status_code == 200:
+                with open(version_model_path, "wb") as file:
+                    file.write(response.content)
+                print("BirdNET model downloaded successfully.")
+                self.model_download_was_required = True
+                self.model_path = version_model_path
+            else:
+                print("Failed to download the file.")
+
+        # Download the labels.
+        labels_url = f"{versions_root}/{version_data['labels']}"
+        if not os.path.exists(version_labels_path):
+            print("BirdNET version label file is missing. Downloading now.")
+            response = requests.get(labels_url)
+            if response.status_code == 200:
+                with open(version_labels_path, "wb") as file:
+                    file.write(response.content)
+                print("BirdNET labels downloaded successfully.")
+                self.label_path = version_labels_path
+            else:
+                print("Failed to download the file.")
 
     @property
     def detections(self):
@@ -231,10 +351,9 @@ class Analyzer:
     def load_model(self):
         print("load model", not self.use_custom_classifier)
         # Load TFLite model and allocate tensors.
-        model_path = MODEL_PATH
         num_threads = 1  # Default from BN-A config
         self.interpreter = tflite.Interpreter(
-            model_path=model_path, num_threads=num_threads
+            model_path=self.model_path, num_threads=num_threads
         )
         self.interpreter.allocate_tensors()
 
@@ -255,7 +374,7 @@ class Analyzer:
 
 
     def load_labels(self):
-        labels_file_path = LABEL_PATH
+        labels_file_path = self.label_path
         if self.classifier_labels_path:
             print("loading custom classifier labels")
             labels_file_path = self.classifier_labels_path
