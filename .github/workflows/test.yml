@@ -21,7 +21,7 @@ jobs:
         with:
           submodules: "recursive"
       - name: submodules recursively
-        run: git submodule update --remote
+        run: git submodule foreach git pull origin main
       - name: Setup FFmpeg
         uses: FedericoCarboni/setup-ffmpeg@v2
       - name: Install libsndfile
