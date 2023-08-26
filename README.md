@@ -56,6 +56,8 @@ print(recording.detections)
   'start_time': 12.0}]
 ```
 
+The `Recording` class takes a file path as an argument. You can also use `RecordingFileObject` to analyze an in-memory object, or `RecordingBuffer` for handling an array buffer.
+
 ### Using a custom classifier with BirdNET-Analyzer
 
 To use a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), pass your labels and model path to the `Analyzer` class.

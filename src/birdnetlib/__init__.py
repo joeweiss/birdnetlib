@@ -1,1 +1,7 @@
-from birdnetlib.main import Recording, Detection, MultiProcessRecording, RecordingBuffer
+from birdnetlib.main import (
+    Recording,
+    Detection,
+    MultiProcessRecording,
+    RecordingBuffer,
+    RecordingFileObject,
+)

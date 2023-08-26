@@ -295,6 +295,49 @@ class RecordingBuffer(RecordingBase):
         self.process_audio_data(self.rate)
 
 
+class RecordingFileObject(RecordingBase):
+    def __init__(
+        self,
+        analyzer,
+        file_obj,
+        week_48=-1,
+        date=None,
+        sensitivity=1.0,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
+        overlap=0.0,
+    ):
+        self.file_obj = file_obj
+        super().__init__(
+            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+        )
+
+    @property
+    def filename(self):
+        return "File Object"
+
+    def read_audio_data(self):
+        print("read_audio_data")
+        # Open file with librosa
+        try:
+            self.ndarray, rate = librosa.load(
+                self.file_obj, sr=SAMPLE_RATE, mono=True, res_type="kaiser_fast"
+            )
+            self.duration = librosa.get_duration(y=self.ndarray, sr=SAMPLE_RATE)
+        except audioread.exceptions.NoBackendError as e:
+            print(e)
+            raise AudioFormatError("Audio format could not be opened.")
+        except FileNotFoundError as e:
+            print(e)
+            raise e
+        except BaseException as e:
+            print(e)
+            raise AudioFormatError("Generic audio read error occurred from librosa.")
+
+        self.process_audio_data(rate)
+
+
 class MultiProcessRecording:
 
     """Stub class for multiprocessing recording results."""
