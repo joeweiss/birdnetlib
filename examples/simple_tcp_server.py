@@ -23,12 +23,14 @@ arecord -r 48000 -f FLOAT_LE --max-file-time 10 | nc 127.0.0.1 9988
 If you want to stream from somewhere other than the localhost,
 change the TCPServer address from 127.0.0.1 to 0.0.0.0 
 """
+
+
 class MyTCPHandler(socketserver.StreamRequestHandler):
     def handle(self):
         analyzer = Analyzer()
-        #Read WAV data from the socket
-        for rate,data in wavutils.bufferwavs(self.rfile):
-            #Make a RecordingBuffer with buffer and rate
+        # Read WAV data from the socket
+        for rate, data in wavutils.bufferwavs(self.rfile):
+            # Make a RecordingBuffer with buffer and rate
             recording = RecordingBuffer(
                 analyzer,
                 data,
@@ -41,9 +43,10 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
             recording.analyze()
             pprint(recording.detections)
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     try:
-        with socketserver.TCPServer(('127.0.0.1', 9988), MyTCPHandler) as server:
+        with socketserver.TCPServer(("127.0.0.1", 9988), MyTCPHandler) as server:
             print("Birdnetlib forever!")
             server.serve_forever()
     except KeyboardInterrupt:
