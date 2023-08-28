@@ -1,6 +1,7 @@
 # birdnetlib
 
 [![PyPI](https://img.shields.io/pypi/v/birdnetlib.svg)](https://pypi.org/project/birdnetlib/)
+[![Python 3.x](https://img.shields.io/pypi/pyversions/birdnetlib.svg?logo=python&logoColor=white)](https://pypi.org/project/birdnetlib/)
 [![Test](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml/badge.svg)](https://github.com/joeweiss/birdnetlib/actions/workflows/test.yml)
 
 A python api for BirdNET-Analyzer and BirdNET-Lite
