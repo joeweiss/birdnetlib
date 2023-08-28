@@ -1,0 +1,54 @@
+site_name: birdnetlib
+theme:
+  name: material
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    scheme: slate
+  features:
+    - content.code.copy
+    - navigation.tabs
+    - navigation.sections
+repo_url: https://github.com/joeweiss/birdnetlib
+repo_name: joeweiss/birdnetlib
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+# plugins:
+#   - blog
+#   - rss:
+#       match_path: blog/posts/.*
+#       date_from_meta:
+#         as_creation: date
+#       categories:
+#         - categories
+#         - tags
+
+plugins:
+  - search
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            show_source: false
+
+nav:
+  - Home:
+      - index.md
+  - Getting started:
+      - getting-started.md
+  - Analyzers:
+      - analyzers.md
+  - Examples:
+      - examples.md
+  - Utilties:
+      - utility-classes.md
+  - Changelog:
+      - changelog.md
