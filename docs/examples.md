@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # Examples
 
 [Extract detections as audio file samples and/or spectrograms](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_and_extract.py)

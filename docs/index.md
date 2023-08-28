@@ -1,3 +1,8 @@
+---
+hide:
+  - navigation
+---
+
 # birdnetlib
 
 [![PyPI](https://img.shields.io/pypi/v/birdnetlib.svg)](https://pypi.org/project/birdnetlib/)

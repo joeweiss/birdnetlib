@@ -7,8 +7,10 @@ theme:
     scheme: slate
   features:
     - content.code.copy
-    - navigation.tabs
     - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+
 repo_url: https://github.com/joeweiss/birdnetlib
 repo_name: joeweiss/birdnetlib
 
@@ -38,14 +40,13 @@ plugins:
         python:
           options:
             show_source: false
-
 nav:
   - Home:
       - index.md
   - Getting started:
       - getting-started.md
-  - Analyzers:
-      - analyzers.md
+  - API:
+      - api.md
   - Examples:
       - examples.md
   - Utilties:

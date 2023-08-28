@@ -1,6 +1,62 @@
-# Analyzers
+---
+hide:
+  - navigation
+---
 
-## Using specific versions of BirdNET-Analyzer
+# Classes
+
+## Recording Classes
+
+### Recording
+
+Use the `Recording` class to open and analyze a file from disk.
+
+```python
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    min_conf=0.25,
+)
+recording.analyze()
+print(recording.detections)
+```
+
+### RecordingFileObject
+
+Use the `Recording` class to analyze an in-memory file object.
+
+```python
+with io.BytesIO(r.content) as fileObj:
+    recording = RecordingFileObject(
+        analyzer,
+        fileObj,
+        lat=35.6,
+        lon=-77.3,
+        date=datetime(year=2023, month=6, day=27),  # use date or week_48
+        min_conf=0.25,
+    )
+    recording.analyze()
+    pprint(recording.detections)
+```
+
+See [Download and analyzer an audio file from a URL](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_from_url.py) for a working implementation of `RecordingFileObject`.
+
+### RecordingBuffer
+
+Use the `Recording` class to analyze an in-memory array buffer.
+
+See the example [Analyze an audio stream in realtime using RecordingBuffer class](https://github.com/joeweiss/birdnetlib/blob/main/examples/simple_tcp_server.py) for more information.
+
+## Analyzer classes
+
+### Analyzer
+
+#### Using specific versions of BirdNET-Analyzer
 
 To use a specific version of BirdNET-Analyzer model, pass the version to the `Analyzer` class.
 
@@ -11,7 +67,7 @@ analyzer = Analyzer(version="2.3")
 
 Note: `birdnetlib` is compatible with BirdNET-Analyzer model versions 2.1 and higher. For more information on specific versions of BirdNET-Analyzer, see their [model version history](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints).
 
-## Using a custom classifier with BirdNET-Analyzer
+#### Using a custom classifier with BirdNET-Analyzer
 
 To use a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), pass your labels and model path to the `Analyzer` class.
 
@@ -37,7 +93,7 @@ recording.analyze()
 print(recording.detections)
 ```
 
-## Using BirdNET-Lite
+### LiteAnalyzer - using BirdNET-Lite
 
 To use the legacy BirdNET-Lite model, use the `LiteAnalyzer` class.
 
