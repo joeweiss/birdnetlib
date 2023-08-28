@@ -35,5 +35,6 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/joeweiss/birdnetlib"
-"Bug Tracker" = "https://github.com/joeweiss/birdnetlib/issues"
+"Source code" = "https://github.com/joeweiss/birdnetlib"
+"Issues" = "https://github.com/joeweiss/birdnetlib/issues"
+"Documentation" = "https://joeweiss.github.io/birdnetlib/"
