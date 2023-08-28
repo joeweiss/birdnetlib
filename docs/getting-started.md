@@ -6,10 +6,6 @@
 pip install birdnetlib
 ```
 
-## Documentation
-
-`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
-
 ### Using BirdNET-Analyzer
 
 To use the latest BirdNET-Analyzer model, use the `Analyzer` class.
