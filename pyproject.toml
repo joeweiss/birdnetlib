@@ -11,7 +11,7 @@ exclude = [
 
 [project]
 name = "birdnetlib"
-version = "0.9.0"
+version = "0.10.0"
 authors = [
   { name="Joe Weiss", email="joe.weiss@gmail.com" },
 ]
@@ -20,9 +20,12 @@ readme = "README.md"
 license = {text = "Apache-2.0"}
 requires-python = ">=3.9"
 classifiers = [
-    "Programming Language :: Python :: 3",
     "License :: OSI Approved :: Apache Software License",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.9",
 ]
 dependencies = [
     "watchdog==2.1.9",
@@ -32,5 +35,6 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/joeweiss/birdnetlib"
-"Bug Tracker" = "https://github.com/joeweiss/birdnetlib/issues"
+"Source code" = "https://github.com/joeweiss/birdnetlib"
+"Issues" = "https://github.com/joeweiss/birdnetlib/issues"
+"Documentation" = "https://joeweiss.github.io/birdnetlib/"

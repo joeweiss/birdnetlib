@@ -6,14 +6,6 @@
 
 A python api for BirdNET-Analyzer and BirdNET-Lite
 
-`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
-
-## Documentation
-
-Documentation is at [https://joeweiss.github.io/birdnetlib](https://joeweiss.github.io/birdnetlib/).
-
-See [Getting Started](https://joeweiss.github.io/birdnetlib/getting-started/) for a quick introduction.
-
 ## Installation
 
 `birdnetlib` requires Python 3.9+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
@@ -22,7 +14,11 @@ See [Getting Started](https://joeweiss.github.io/birdnetlib/getting-started/) fo
 pip install birdnetlib
 ```
 
-### Basic usage
+## Documentation
+
+`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
+
+### Using BirdNET-Analyzer
 
 To use the latest BirdNET-Analyzer model, use the `Analyzer` class.
 
@@ -63,11 +59,11 @@ print(recording.detections)
 
 The `Recording` class takes a file path as an argument. You can also use `RecordingFileObject` to analyze an in-memory object, or `RecordingBuffer` for handling an array buffer.
 
-## About BirdNET-Lite and BirdNET-Analyzer
+## About BirdNET-Analyzer
 
-`birdnetlib` uses models provided by BirdNET-Lite and BirdNET-Analyzer under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
+`birdnetlib` uses models provided by BirdNET-Analyzer and BirdNET-Lite under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
 
-BirdNET-Lite and BirdNET-Analyzer were developed by the [K. Lisa Yang Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/) at the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home).
+BirdNET-Analyzer and BirdNET-Lite were developed by the [K. Lisa Yang Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/) at the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home).
 
 For more information on BirdNET analyzers, please see the project repositories below:
 
