@@ -28,7 +28,7 @@ print(recording.detections)
 
 ### RecordingFileObject
 
-Use the `Recording` class to analyze an in-memory file object.
+Use the `RecordingFileObject` class to analyze an in-memory file object.
 
 ```python
 with io.BytesIO(r.content) as fileObj:
@@ -48,7 +48,7 @@ See [Download and analyzer an audio file from a URL](https://github.com/joeweiss
 
 ### RecordingBuffer
 
-Use the `Recording` class to analyze an in-memory array buffer.
+Use the `RecordingBuffer` class to analyze an in-memory array buffer.
 
 See the example [Analyze an audio stream in realtime using RecordingBuffer class](https://github.com/joeweiss/birdnetlib/blob/main/examples/simple_tcp_server.py) for more information.
 
