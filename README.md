@@ -53,12 +53,14 @@ print(recording.detections)
   'confidence': 0.5744,
   'end_time': 12.0,
   'scientific_name': 'Haemorhous mexicanus',
-  'start_time': 9.0},
+  'start_time': 9.0,
+  'label': 'Haemorhous mexicanus_House Finch'},
  {'common_name': 'House Finch',
   'confidence': 0.4496,
   'end_time': 15.0,
   'scientific_name': 'Haemorhous mexicanus',
-  'start_time': 12.0}]
+  'start_time': 12.0,
+  'label': 'Haemorhous mexicanus_House Finch'}]
 ```
 
 The `Recording` class takes a file path as an argument. You can also use `RecordingFileObject` to analyze an in-memory object, or `RecordingBuffer` for handling an array buffer.

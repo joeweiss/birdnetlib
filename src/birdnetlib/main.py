@@ -385,6 +385,7 @@ class Detection:
             "start_time": self.start_time,
             "end_time": self.end_time,
             "confidence": self.confidence,
+            "label": self.result,
         }
 
 

@@ -291,6 +291,7 @@ def test_extraction():
             "extracted_spectrogram_path": f"{export_dir}/soundscape_7s-14s.png",
             "scientific_name": "Haemorhous mexicanus",
             "start_time": 9.0,
+            "label": "Haemorhous mexicanus_House Finch",
         }
 
         assert detection == expected_detection

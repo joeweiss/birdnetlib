@@ -260,6 +260,11 @@ def test_with_species_list():
     assert (
         commandline_results[0]["common_name"] == recording.detections[0]["common_name"]
     )
+    assert "label" in recording.detections[0]
+    assert (
+        recording.detections[0]["label"]
+        == f"{commandline_results[0]['scientific_name']}_{commandline_results[0]['common_name']}"
+    )
 
     commandline_birds = [i["common_name"] for i in commandline_results]
     detected_birds = [i["common_name"] for i in recording.detections]
