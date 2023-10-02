@@ -146,6 +146,12 @@ def test_with_custom_list_path():
     assert commandline_results[0]["common_name"] == "Spotted Towhee"
     assert pytest.approx(commandline_results[0]["confidence"], 0.01) == 0.55690277
 
+    assert "label" in recording.detections[0]
+    assert (
+        recording.detections[0]["label"]
+        == f"{commandline_results[0]['scientific_name']}_{commandline_results[0]['common_name']}"
+    )
+
 
 def test_with_custom_list():
 

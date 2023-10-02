@@ -41,6 +41,7 @@ class Detection:
         self.common_name = ""
         self.scientific_name = ""
         self.confidence = 0
+        self.label = ""
 
     @property
     def as_dict(self):
@@ -50,6 +51,7 @@ class Detection:
             "start_time": self.start_time,
             "end_time": self.end_time,
             "confidence": self.confidence,
+            "label": self.label,
         }
 
 
@@ -228,13 +230,15 @@ class Analyzer:
             end_time = float(key.split("-")[1])
             for c in value:
                 confidence = float(c[1])
-                scientific_name = c[0].split("_")[0]
-                common_name = c[0].split("_")[1]
+                label = c[0]
+                scientific_name = label.split("_")[0]
+                common_name = label.split("_")[1]
                 # print(c[0], f"{c[1]:1.4f}")
                 d = Detection(start_time, end_time)
                 d.common_name = common_name
                 d.scientific_name = scientific_name
                 d.confidence = confidence
+                d.label = label
                 # print(d.as_dict)
                 detections.append(d)
 
