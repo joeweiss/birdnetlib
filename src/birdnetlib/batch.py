@@ -2,7 +2,7 @@ from birdnetlib import Recording, MultiProcessRecording
 from pathlib import Path
 from multiprocessing import Pool, Manager
 import multiprocessing
-
+import queue
 # from pprint import pprint
 
 
@@ -97,10 +97,13 @@ class DirectoryAnalyzer:
 
 def process_from_queue(shared_queue, results=[], analyzers=None):
     print("process_from_queue")
-    if shared_queue.empty():
+
+    try:
+        recording_config, analyzer_args = shared_queue.get(timeout=0)
+    except queue.Empty:
+        # Nothing left in queue, return results.
         return results
-    # print(os.getpid())
-    recording_config, analyzer_args = shared_queue.get()
+
     file_path = recording_config["path"]
 
     # pprint(recording_config)
