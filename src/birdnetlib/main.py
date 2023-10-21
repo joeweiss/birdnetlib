@@ -8,7 +8,7 @@ from os import path
 from birdnetlib.utils import return_week_48_from_datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
-
+from collections import namedtuple
 
 SAMPLE_RATE = 48000
 
@@ -97,6 +97,7 @@ class RecordingBase:
             "lat": self.lat,
             "lon": self.lon,
             "minimum_confidence": self.minimum_confidence,
+            "duration": self.duration,
         }
         return {"path": self.path, "config": config, "detections": self.detections}
 
@@ -338,18 +339,104 @@ class RecordingFileObject(RecordingBase):
         self.process_audio_data(rate)
 
 
-class MultiProcessRecording:
-
-    """Stub class for multiprocessing recording results."""
-
+class MultiProcessRecording(RecordingBase):
     def __init__(
-        self, path=None, config=None, detections=[], error=False, error_message=None
+        self,
+        results,
     ):
-        self.path = path
-        self.config = config
-        self.detections = detections
-        self.error = error
-        self.error_message = error_message
+        self.path = results.get("path")
+        p = Path(self.path)
+        self.filestem = p.stem
+        self.config = results.get("config", {})
+
+        week_48 = results.get("config", {}).get("week_48", -1)
+        date = results.get("config", {}).get("date", None)
+        sensitivity = results.get("config", {}).get("sensitivity", 1.0)
+        lat = results.get("config", {}).get("lat", None)
+        lon = results.get("config", {}).get("lon", None)
+        min_conf = results.get("config", {}).get("minimum_confidence", 0.1)
+        overlap = results.get("config", {}).get("overlap", 0.1)
+
+        Analyzer = namedtuple("Analyzer", ["model_name", "custom_species_list"])
+
+        analyzer = Analyzer(
+            model_name=results.get("config", {}).get("model_name"),
+            custom_species_list=[],
+        )
+
+        super().__init__(
+            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+        )
+
+        # After super init.
+        self.analyzed = True
+        self.error = results.get("error")
+        self.error_message = results.get("error_message")
+        self.duration = results.get("duration")
+
+        passed_detections = results.get("detections", [])
+        self.detection_list = [
+            Detection(
+                start_time=i["start_time"],
+                end_time=i["end_time"],
+                data=[[i["label"], i["confidence"]]],
+            )
+            for i in passed_detections
+        ]
+
+    @property
+    def filename(self):
+        return path.basename(self.path)
+
+    def read_audio_data(self):
+        print("read_audio_data")
+        # Open file with librosa (uses ffmpeg or libav)
+        try:
+            self.ndarray, rate = librosa.load(
+                self.path, sr=SAMPLE_RATE, mono=True, res_type="kaiser_fast"
+            )
+            self.duration = librosa.get_duration(y=self.ndarray, sr=SAMPLE_RATE)
+        except audioread.exceptions.NoBackendError as e:
+            print(e)
+            raise AudioFormatError("Audio format could not be opened.")
+        except FileNotFoundError as e:
+            print(e)
+            raise e
+        except BaseException as e:
+            print(e)
+            raise AudioFormatError("Generic audio read error occurred from librosa.")
+
+        # Process audio data is not needed in multiprocess post-extract.
+        # self.process_audio_data(rate)
+
+    def extract_detections_as_audio(
+        self, directory, padding_secs=0, format="flac", bitrate="192k", min_conf=0
+    ):
+        if self.ndarray is None:
+            self.read_audio_data()
+        return super().extract_detections_as_audio(
+            directory, padding_secs, format, bitrate, min_conf
+        )
+
+    def extract_detections_as_spectrogram(
+        self, directory, padding_secs=0, min_conf=0, top=14000, format="jpg", dpi=144
+    ):
+        if self.ndarray is None:
+            self.read_audio_data()
+        return super().extract_detections_as_spectrogram(
+            directory, padding_secs, min_conf, top, format, dpi
+        )
+
+    def process_audio_data(self, rate):
+        raise NotImplementedError(
+            "MultiProcessRecording objects can not be re-processed from this interface."
+        )
+
+    def analyze(self):
+        raise NotImplementedError(
+            "MultiProcessRecording objects can not be re-analyzed from this interface."
+        )
+
 
 
 class Detection:
