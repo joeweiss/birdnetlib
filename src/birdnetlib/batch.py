@@ -1,8 +1,11 @@
-from birdnetlib import Recording, MultiProcessRecording
+from birdnetlib import (
+    Recording,
+    MultiProcessRecording,
+)
 from pathlib import Path
 from multiprocessing import Pool, Manager
 import multiprocessing
-
+import queue
 # from pprint import pprint
 
 
@@ -97,10 +100,13 @@ class DirectoryAnalyzer:
 
 def process_from_queue(shared_queue, results=[], analyzers=None):
     print("process_from_queue")
-    if shared_queue.empty():
+
+    try:
+        recording_config, analyzer_args = shared_queue.get(timeout=0)
+    except queue.Empty:
+        # Nothing left in queue, return results.
         return results
-    # print(os.getpid())
-    recording_config, analyzer_args = shared_queue.get()
+
     file_path = recording_config["path"]
 
     # pprint(recording_config)
@@ -152,6 +158,7 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                     "error": True,
                     "error_message": error,
                     "detections": [],
+                    "duration": None,
                 }
             )
     results.append(*recordings)
@@ -285,13 +292,16 @@ class DirectoryMultiProcessingAnalyzer:
 
         for results in directory_recordings:
             # Return as RecordingResults object
-            results = MultiProcessRecording(
-                path=results["path"],
-                config=results["config"],
-                detections=results["detections"],
-                error=results.get("error", False),
-                error_message=results.get("error_message", None),
-            )
+            # pprint(
+            #     {
+            #         "path": results["path"],
+            #         "config": results["config"],
+            #         "detections": results["detections"],
+            #         "error": results.get("error", False),
+            #         "error_message": results.get("error_message", None),
+            #     }
+            # )
+            results = MultiProcessRecording(results=results)
             self.directory_recordings.append(results)
 
         # Look for exceptions.

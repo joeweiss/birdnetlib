@@ -1,11 +1,14 @@
 from birdnetlib.batch import DirectoryMultiProcessingAnalyzer
 from birdnetlib.analyzer_lite import LiteAnalyzer
 from birdnetlib.analyzer import Analyzer, MODEL_PATH, LABEL_PATH
+from birdnetlib import MultiProcessRecording
 import tempfile
 import shutil
 import os
-from datetime import datetime
+from datetime import datetime, date
 import time
+import pytest
+from pprint import pprint
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -39,6 +42,117 @@ def test_batch():
         assert type(batch.directory_recordings[0].path).__name__ == "str"
 
     print("test_batch completed in", time.time() - start)
+
+
+def test_multiprocess_recording_obj():
+    results = {
+        "config": {
+            "date": date(year=2023, month=1, day=1),
+            "lat": 55.11,
+            "lon": 54.11,
+            "minimum_confidence": 0.1,
+            "model_name": "BirdNET-Lite",
+            "sensitivity": 1.0,
+            "week_48": -1,
+        },
+        "detections": [
+            {
+                "common_name": "House Wren",
+                "confidence": 0.19981279969215393,
+                "end_time": 15.0,
+                "label": "Troglodytes aedon_House Wren",
+                "scientific_name": "Troglodytes aedon",
+                "start_time": 12.0,
+            },
+            {
+                "common_name": "Huet's Fulvetta",
+                "confidence": 0.1636040210723877,
+                "end_time": 27.0,
+                "label": "Alcippe hueti_Huet's Fulvetta",
+                "scientific_name": "Alcippe hueti",
+                "start_time": 24.0,
+            },
+            {
+                "common_name": "Spotted Towhee",
+                "confidence": 0.17119209468364716,
+                "end_time": 51.0,
+                "label": "Pipilo maculatus_Spotted Towhee",
+                "scientific_name": "Pipilo maculatus",
+                "start_time": 48.0,
+            },
+            {
+                "common_name": "Gray-bellied Spinetail",
+                "confidence": 0.1158079132437706,
+                "end_time": 99.0,
+                "label": "Synallaxis cinerascens_Gray-bellied Spinetail",
+                "scientific_name": "Synallaxis cinerascens",
+                "start_time": 96.0,
+            },
+        ],
+        "error": False,
+        "error_message": None,
+        "path": "tests/test_files/soundscape.wav",
+        "duration": 120.0,
+    }
+
+    recording = MultiProcessRecording(results=results)
+    assert len(recording.detections) == 4
+    assert recording.date == date(year=2023, month=1, day=1)
+    assert recording.lat == results["config"]["lat"]
+    assert recording.lon == results["config"]["lon"]
+    assert recording.minimum_confidence == results["config"]["minimum_confidence"]
+    assert recording.error == results["error"]
+    assert recording.error_message == results["error_message"]
+    assert recording.path == results["path"]
+    assert recording.duration == 120.0
+
+    with tempfile.TemporaryDirectory() as export_dir:
+        recording.extract_detections_as_audio(
+            directory=export_dir,
+            format="mp3",
+            bitrate="128k",
+            padding_secs=2,
+        )
+
+        recording.extract_detections_as_spectrogram(
+            directory=export_dir,
+            format="png",
+            padding_secs=2,
+        )
+
+        # Check file list.
+        files = os.listdir(export_dir)
+
+        files.sort()
+
+        assert files == [
+            "soundscape_10s-17s.mp3",
+            "soundscape_10s-17s.png",
+            "soundscape_22s-29s.mp3",
+            "soundscape_22s-29s.png",
+            "soundscape_46s-53s.mp3",
+            "soundscape_46s-53s.png",
+            "soundscape_94s-101s.mp3",
+            "soundscape_94s-101s.png",
+        ]
+
+    # Check that not implemented methods are raised on multi-processed recordings.
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        recording.analyze()
+
+    assert (
+        str(exc_info.value)
+        == "MultiProcessRecording objects can not be re-analyzed from this interface."
+    )
+
+    with pytest.raises(NotImplementedError) as exc_info:
+        recording.process_audio_data(44100)
+
+    assert (
+        str(exc_info.value)
+        == "MultiProcessRecording objects can not be re-processed from this interface."
+    )
 
 
 def test_batch_with_kwargs():
