@@ -162,8 +162,6 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                 }
             )
     results.append(*recordings)
-    if not shared_queue.empty():
-        process_from_queue(shared_queue, results, analyzers)
     return results
 
 
@@ -275,7 +273,7 @@ class DirectoryMultiProcessingAnalyzer:
 
                 shared_queue.put((recording.__dict__, analyzer_args))
 
-            args = [shared_queue for _ in range(self.processes)]
+            args = [shared_queue for _ in range(shared_queue.qsize())]
 
             with Pool(self.processes) as p:
                 # execute the tasks in parallel
