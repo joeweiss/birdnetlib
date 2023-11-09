@@ -1,5 +1,5 @@
 from birdnetlib import Recording
-from birdnetlib.analyzer import Analyzer, MODEL_PATH, LABEL_PATH
+from birdnetlib.analyzer import Analyzer, AnalyzerConfigurationError
 
 from pprint import pprint
 import pytest
@@ -10,7 +10,6 @@ from unittest.mock import patch
 
 
 def test_without_species_list():
-
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -74,7 +73,6 @@ def test_without_species_list():
 
 
 def test_with_species_list_path():
-
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -157,7 +155,6 @@ def test_with_species_list_path():
 
 
 def test_with_species_list():
-
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -288,8 +285,19 @@ def test_with_species_list():
         recording.analyze()
 
 
-def test_species_list_calls():
+def test_custom_trained_analyzer():
+    expected_message = "Using a custom-trained classifier requires both classifier_model_path and classifier_labels_path"
 
+    with pytest.raises(AnalyzerConfigurationError) as exc_info:
+        analyzer = Analyzer(classifier_model_path="/some/path/")
+    assert str(exc_info.value) == expected_message
+
+    with pytest.raises(AnalyzerConfigurationError) as exc_info:
+        analyzer = Analyzer(classifier_labels_path="/some/path/")
+    assert str(exc_info.value) == expected_message
+
+
+def test_species_list_calls():
     lon = -120.7463
     lat = 35.4244
     week_48 = 18

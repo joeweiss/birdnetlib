@@ -34,6 +34,10 @@ LABEL_PATH = os.path.join(
 LOCATION_FILTER_THRESHOLD = 0.03
 
 
+class AnalyzerConfigurationError(Exception):
+    pass
+
+
 class Detection:
     def __init__(self, start_time, end_time):
         self.start_time = start_time
@@ -98,8 +102,16 @@ class Analyzer:
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
         self.use_custom_classifier = (
-            self.classifier_labels_path and self.classifier_labels_path
+            self.classifier_model_path and self.classifier_labels_path
         )
+        if self.classifier_model_path and not self.use_custom_classifier:
+            raise AnalyzerConfigurationError(
+                "Using a custom-trained classifier requires both classifier_model_path and classifier_labels_path"
+            )
+        if self.classifier_labels_path and not self.use_custom_classifier:
+            raise AnalyzerConfigurationError(
+                "Using a custom-trained classifier requires both classifier_model_path and classifier_labels_path"
+            )
 
         if self.use_custom_classifier:
             self.load_custom_models()
@@ -280,13 +292,11 @@ class Analyzer:
         week_48=None,
         filter_threshold=LOCATION_FILTER_THRESHOLD,
     ):
-
         print("return_predicted_species_list")
 
         return self.species_class.return_list_for_analyzer(
             lat=lat, lon=lon, week_48=week_48, threshold=filter_threshold
         )
-
 
     def set_predicted_species_list_from_position(self, recording):
         print("set_predicted_species_list_from_position")
@@ -325,7 +335,6 @@ class Analyzer:
         end = recording.sample_secs
         results = {}
         for c in recording.chunks:
-
             if self.use_custom_classifier:
                 pred = self.predict_with_custom_classifier(c)[0]
             else:
@@ -375,7 +384,6 @@ class Analyzer:
             self.output_layer_index = self.output_details[0]["index"]
 
         print("Model loaded.")
-
 
     def load_labels(self):
         labels_file_path = self.label_path
