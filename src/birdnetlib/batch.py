@@ -98,14 +98,14 @@ class DirectoryAnalyzer:
         self.on_analyze_directory_complete(self.directory_recordings)
 
 
-def process_from_queue(queue_item, results=[], analyzers=None):
+def process_from_queue(queue_item, analyzers=None):
     print("process_from_queue")
 
     try:
         recording_config, analyzer_args = queue_item
     except queue.Empty:
-        # Nothing left in queue, return results.
-        return results
+        # Nothing left in queue
+        return
 
     file_path = recording_config["path"]
 
@@ -161,8 +161,7 @@ def process_from_queue(queue_item, results=[], analyzers=None):
                     "duration": None,
                 }
             )
-    results.append(*recordings)
-    return results
+    return recordings
 
 
 class DirectoryMultiProcessingAnalyzer:
