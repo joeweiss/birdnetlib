@@ -31,3 +31,14 @@ pytest
 
 
 ```
+
+
+## Checking out a PR
+
+```
+git fetch origin pull/ID/head:NEW_BRANCH_NAME
+
+# Then switch to the new branch by name.
+
+```
+

@@ -149,8 +149,9 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
             )
             recording.analyze()
             recordings.append(recording.as_dict)
+            del recording
         except BaseException as error:
-            print(recording, error)
+            print(error)
             recordings.append(
                 {
                     "path": file_path,
@@ -162,6 +163,7 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                 }
             )
     results.append(*recordings)
+    del recordings
     if not shared_queue.empty():
         process_from_queue(shared_queue, results, analyzers)
     return results
