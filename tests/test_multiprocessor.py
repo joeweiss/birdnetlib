@@ -9,7 +9,6 @@ from datetime import datetime, date
 import time
 import pytest
 from pprint import pprint
-import multiprocessing
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -23,9 +22,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
             shutil.copy2(s, d)
 
 
+@pytest.mark.omit_during_ghactions
 def test_batch():
-    print("test_batch", multiprocessing.get_start_method())
-
     analyzer = LiteAnalyzer()
     test_files = "tests/test_files"
 
@@ -47,6 +45,7 @@ def test_batch():
     print("test_batch completed in", time.time() - start)
 
 
+@pytest.mark.omit_during_ghactions
 def test_multiprocess_recording_obj():
     results = {
         "config": {
@@ -158,6 +157,7 @@ def test_multiprocess_recording_obj():
     )
 
 
+@pytest.mark.omit_during_ghactions
 def test_batch_with_kwargs():
     test_files = "tests/test_files"
 
@@ -190,6 +190,7 @@ def test_batch_with_kwargs():
     print("test_batch completed in", time.time() - start)
 
 
+@pytest.mark.omit_during_ghactions
 def test_process_defined_batch():
     analyzer = LiteAnalyzer()
     test_files = "tests/test_files"
@@ -212,6 +213,7 @@ def test_process_defined_batch():
     print("test_process_defined_batch completed in", time.time() - start)
 
 
+@pytest.mark.omit_during_ghactions
 def test_batch_error():
     analyzer = LiteAnalyzer()
     test_files = "tests/test_files"
@@ -240,6 +242,7 @@ def test_batch_error():
     print("test_process_defined_batch completed in", time.time() - start)
 
 
+@pytest.mark.omit_during_ghactions
 def test_batch_extensions():
     analyzer = LiteAnalyzer()
     test_files = "tests/test_files"

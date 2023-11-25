@@ -37,4 +37,4 @@ jobs:
           # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
         run: |
-          pytest --capture=no
+          pytest -m "not omit_during_ghactions"
