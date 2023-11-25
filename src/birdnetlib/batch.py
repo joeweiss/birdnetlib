@@ -98,14 +98,14 @@ class DirectoryAnalyzer:
         self.on_analyze_directory_complete(self.directory_recordings)
 
 
-def process_from_queue(shared_queue, results=[], analyzers=None):
+def process_from_queue(queue_item, analyzers=None):
     print("process_from_queue")
 
     try:
-        recording_config, analyzer_args = shared_queue.get(timeout=0)
+        recording_config, analyzer_args = queue_item
     except queue.Empty:
-        # Nothing left in queue, return results.
-        return results
+        # Nothing left in queue
+        return
 
     file_path = recording_config["path"]
 
@@ -161,10 +161,7 @@ def process_from_queue(shared_queue, results=[], analyzers=None):
                     "duration": None,
                 }
             )
-    results.append(*recordings)
-    if not shared_queue.empty():
-        process_from_queue(shared_queue, results, analyzers)
-    return results
+    return recordings
 
 
 class DirectoryMultiProcessingAnalyzer:
@@ -243,7 +240,7 @@ class DirectoryMultiProcessingAnalyzer:
 
         with Manager() as manager:
             # create the shared queue
-            shared_queue = manager.Queue()
+            shared_queue = manager.list()
 
             analyzer_args = [
                 {
@@ -273,15 +270,13 @@ class DirectoryMultiProcessingAnalyzer:
                     overlap=self.overlap,
                 )
 
-                shared_queue.put((recording.__dict__, analyzer_args))
-
-            args = [shared_queue for _ in range(self.processes)]
+                shared_queue.append((recording.__dict__, analyzer_args))
 
             with Pool(self.processes) as p:
                 # execute the tasks in parallel
                 results = p.map(
                     process_from_queue,
-                    args,
+                    shared_queue,
                 )
 
             # print("All done")
