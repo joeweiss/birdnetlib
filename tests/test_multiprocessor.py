@@ -9,6 +9,7 @@ from datetime import datetime, date
 import time
 import pytest
 from pprint import pprint
+import multiprocessing
 
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -23,6 +24,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 
 def test_batch():
+    print("test_batch", multiprocessing.get_start_method())
+
     analyzer = LiteAnalyzer()
     test_files = "tests/test_files"
 
