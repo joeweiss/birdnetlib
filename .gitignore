@@ -141,3 +141,5 @@ examples/*.flac
 
 tests/custom_files
 tests/test_analyzer_custom.py
+
+_data
