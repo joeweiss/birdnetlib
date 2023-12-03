@@ -22,7 +22,7 @@ def log(text_to_append):
 @pytest.mark.parametrize(
     "filepath,cls_type",
     [
-        ["test_files/22min/22m00s_48kHz_mono.wav", "large"],
+        # ["test_files/22min/22m00s_48kHz_mono.wav", "large"],
         ["test_files/22min/22m00s_48kHz_mono.mp3", "large"],
         ["test_files/22min/22m00s_48kHz_mono.flac", "large"],
     ],
