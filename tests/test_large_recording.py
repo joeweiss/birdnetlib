@@ -136,12 +136,9 @@ def test_large_extractions():
     lat = 35.4244
     week_48 = 18
     min_conf = 0.25
-    # input_path = os.path.join(
-    #     os.path.dirname(__file__), "test_files/edge_cases/22m00s_48kHz_mono.wav"
-    # )
 
     input_path = os.path.join(
-        os.path.dirname(__file__), "test_files/22min/22m00s_48kHz_mono.wav"
+        os.path.dirname(__file__), "test_files/22min/22m00s_48kHz_mono.flac"
     )
 
     analyzer = LargeRecordingAnalyzer()
