@@ -17,6 +17,7 @@ from pathlib import Path
 import json
 
 from birdnetlib.species import SpeciesList
+from birdnetlib.utils import read_audio_segments
 from pprint import pprint
 
 # TODO: Update these values on every new model release.
@@ -478,3 +479,74 @@ class Analyzer:
         self.custom_output_layer_index = self.custom_output_details[0]["index"]
 
         print("Custom model loaded.")
+
+
+class LargeRecordingAnalyzer(Analyzer):
+    def __init__(
+        self,
+        custom_species_list_path=None,
+        custom_species_list=None,
+        classifier_model_path=None,
+        classifier_labels_path=None,
+        version=None,
+    ):
+        super().__init__(
+            custom_species_list_path,
+            custom_species_list,
+            classifier_model_path,
+            classifier_labels_path,
+            version,
+        )
+
+    def analyze_recording(self, recording):
+        # print("analyze_recording, large mode", recording.filename)
+
+        if self.has_custom_species_list and recording.lon and recording.lat:
+            raise ValueError(
+                "Recording lon/lat should not be used in conjunction with a custom species list or path."
+            )
+
+        # If recording has lon/lat, load cached list or predict a new species list.
+        if recording.lon and recording.lat and self.classifier_model_path == None:
+            print("recording has lon/lat")
+            self.set_predicted_species_list_from_position(recording)
+
+        start = 0
+        end = recording.sample_secs
+        results = {}
+
+        # Read segments via generator function so that the entire audio file is never loaded into RAM.
+        # TODO: Adapt this to be used by all Analyzers, assuming this works well with Canopy testing.
+        for segment in read_audio_segments(recording.path, sr=48000):
+            c = segment["segment"]
+            start = segment["start_sec"]
+            end = segment["end_sec"]
+            if self.use_custom_classifier:
+                pred = self.predict_with_custom_classifier(c)[0]
+            else:
+                pred = self.predict(c)[0]
+
+            # Assign scores to labels
+            p_labels = dict(zip(self.labels, pred))
+
+            # Sort by score
+            p_sorted = sorted(
+                p_labels.items(), key=operator.itemgetter(1), reverse=True
+            )
+
+            # Filter by recording.minimum_confidence so not to needlessly store full 8K array for each chunk.
+            p_sorted_filtered = [
+                i for i in p_sorted if i[1] >= recording.minimum_confidence
+            ]
+
+            # Store results
+            results[str(start) + "-" + str(end)] = p_sorted_filtered
+
+            # Clean up.
+            del pred
+            del p_labels
+            del p_sorted
+            del c
+
+        self.results = results
+        recording.detection_list = self.detections

@@ -4,4 +4,6 @@ from birdnetlib.main import (
     MultiProcessRecording,
     RecordingBuffer,
     RecordingFileObject,
+    LargeRecording,
+    IncompatibleAnalyzerError,
 )

@@ -33,6 +33,7 @@ opt-einsum==3.3.0
 packaging==21.3
 pluggy==1.0.0
 pooch==1.6.0
+psutil==5.9.6
 protobuf==3.19.4
 py==1.11.0
 pyasn1==0.4.8

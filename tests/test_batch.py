@@ -25,7 +25,7 @@ def test_batch():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 7
+        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryAnalyzer(
             input_dir,
             analyzers=[analyzer],
@@ -43,7 +43,7 @@ def test_batch_extensions():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 7
+        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryAnalyzer(input_dir, analyzers=[analyzer], patterns=["*.wav"])
         batch.process()
         assert len(batch.directory_recordings) == 2
