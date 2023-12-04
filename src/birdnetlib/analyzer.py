@@ -507,7 +507,7 @@ class LargeRecordingAnalyzer(Analyzer):
             )
 
         # If recording has lon/lat, load cached list or predict a new species list.
-        if recording.lon and recording.lat and self.classifier_model_path == None:
+        if recording.lon and recording.lat and self.classifier_model_path is None:
             print("recording has lon/lat")
             self.set_predicted_species_list_from_position(recording)
 
@@ -517,8 +517,13 @@ class LargeRecordingAnalyzer(Analyzer):
 
         # Read segments via generator function so that the entire audio file is never loaded into RAM.
         # TODO: Adapt this to be used by all Analyzers, assuming this works well with Canopy testing.
+
         for segment in read_audio_segments(recording.path, sr=48000):
             c = segment["segment"]
+            if len(c) < 3 * 48000:
+                # If below the minimum segment duration, continue.
+                del c
+                continue
             start = segment["start_sec"]
             end = segment["end_sec"]
             if self.use_custom_classifier:

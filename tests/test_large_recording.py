@@ -259,3 +259,47 @@ def test_exceptions():
     assert (
         str(exc_info.value) == "LargeRecording can only be used with the Analyzer class"
     )
+
+
+# @pytest.mark.parametrize(
+#     "filepath",
+#     [
+#         "test_files/edge_cases/NV017_20200331_120000.wav",
+#     ],
+# )
+# def test_large_single(filepath):
+#     # Process file with command line utility, then process with python library and ensure equal commandline_results.
+
+#     lon = -120.7463
+#     lat = 35.4244
+#     week_48 = 18
+#     min_conf = 0.25
+#     input_path = os.path.join(os.path.dirname(__file__), filepath)
+
+#     # large file file method.
+#     analyzer = LargeRecordingAnalyzer()
+#     recording = LargeRecording(
+#         analyzer,
+#         input_path,
+#         lat=lat,
+#         lon=lon,
+#         week_48=week_48,
+#         min_conf=min_conf,
+#     )
+#     recording.analyze()
+
+#     # pprint(recording.detections)
+
+#     with open("bnl_single.json", "w") as json_file:
+#         json.dump(recording.detections, json_file, indent=4)
+
+#     print("recording.detections", len(recording.detections))
+#     assert (
+#         len(analyzer.custom_species_list) == 141
+#     )  # Check that this matches the number printed by the cli version.
+
+#     # Check that detection confidence is float.
+#     assert isinstance(recording.detections[0]["confidence"], float)
+
+#     # Check that detection confidence is float.
+#     assert isinstance(recording.detections[0]["confidence"], float)
