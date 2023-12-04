@@ -1,7 +1,11 @@
 import librosa
 import numpy as np
 import pydub
-from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
+from birdnetlib.exceptions import (
+    AudioFormatError,
+    AnalyzerRuntimeWarning,
+    IncompatibleAnalyzerError,
+)
 import warnings
 import audioread
 from os import path
@@ -9,6 +13,7 @@ from birdnetlib.utils import return_week_48_from_datetime
 from pathlib import Path
 import matplotlib.pyplot as plt
 from collections import namedtuple
+from birdnetlib.analyzer import LargeRecordingAnalyzer
 
 SAMPLE_RATE = 48000
 
@@ -43,6 +48,12 @@ class RecordingBase:
         self.extracted_spectrogram_paths = {}
 
     def analyze(self):
+        # Check that analyzer is not LargeRecordingAnalyzer
+        if isinstance(self.analyzer, LargeRecordingAnalyzer):
+            raise IncompatibleAnalyzerError(
+                "LargeRecordingAnalyzer can only be used with the LargeRecording class"
+            )
+
         # Compute date to week_48 format as required by current BirdNET analyzers.
         # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
         if self.week_48 != -1:
@@ -128,6 +139,10 @@ class RecordingBase:
 
         print("read_audio_data: complete, read ", str(len(self.chunks)), "chunks.")
 
+    def get_extract_array(self, start_sec, end_sec):
+        # Returns ndarray trimmed for start_sec:end_sec
+        return self.ndarray[start_sec * SAMPLE_RATE : end_sec * SAMPLE_RATE]
+
     def extract_detections_as_audio(
         self,
         directory,
@@ -154,9 +169,7 @@ class RecordingBase:
                 else self.duration
             )
 
-            extract_array = self.ndarray[
-                start_sec * SAMPLE_RATE : end_sec * SAMPLE_RATE
-            ]
+            extract_array = self.get_extract_array(start_sec, end_sec)
 
             channels = 1
             data = np.int16(extract_array * 2**15)  # Normalized to -1, 1
@@ -202,9 +215,7 @@ class RecordingBase:
                 else self.duration
             )
 
-            extract_array = self.ndarray[
-                start_sec * SAMPLE_RATE : end_sec * SAMPLE_RATE
-            ]
+            extract_array = self.get_extract_array(start_sec, end_sec)
 
             path = f"{directory}/{self.filestem}_{start_sec}s-{end_sec}s.{format}"
             plt.specgram(extract_array, Fs=SAMPLE_RATE)
@@ -339,6 +350,63 @@ class RecordingFileObject(RecordingBase):
         self.process_audio_data(rate)
 
 
+class LargeRecording(Recording):
+    def __init__(
+        self,
+        analyzer,
+        path,
+        week_48=-1,
+        date=None,
+        sensitivity=1,
+        lat=None,
+        lon=None,
+        min_conf=0.1,
+        overlap=0,
+    ):
+        super().__init__(
+            analyzer, path, week_48, date, sensitivity, lat, lon, min_conf, overlap
+        )
+
+    def analyze(self):
+        # Check that analyzer is LargeRecordingAnalyzer
+        if not isinstance(self.analyzer, LargeRecordingAnalyzer):
+            raise IncompatibleAnalyzerError(
+                "LargeRecording can only be used with the Analyzer class"
+            )
+
+        # Compute date to week_48 format as required by current BirdNET analyzers.
+        # TODO: Add a warning if both a date and week_48 value is provided. Currently, date would override explicit week_48.
+        if self.week_48 != -1:
+            self.week_48 = max(1, min(self.week_48, 48))
+
+        if self.date:
+            # Convert date to week_48 format for the Analyzer models.
+            self.week_48 = return_week_48_from_datetime(self.date)
+
+        # Set the file duration (does not read full audio into memory)
+        self.duration = librosa.get_duration(filename=self.path)
+
+        # Analyze, though do not read the file all at once.
+        self.analyzer.analyze_recording(self)
+        self.analyzed = True
+
+    def get_extract_array(self, start_sec, end_sec):
+        # Returns ndarray trimmed for start_sec:end_sec
+        print(start_sec, end_sec)
+        sr = SAMPLE_RATE
+        audio_chunk, _ = librosa.load(
+            self.path,
+            sr=sr,
+            mono=True,
+            offset=start_sec / sr,
+            duration=(end_sec - start_sec),
+        )
+
+        return audio_chunk
+
+        # return self.ndarray[start_sec * SAMPLE_RATE : end_sec * SAMPLE_RATE]
+
+
 class MultiProcessRecording(RecordingBase):
     def __init__(
         self,
@@ -436,7 +504,6 @@ class MultiProcessRecording(RecordingBase):
         raise NotImplementedError(
             "MultiProcessRecording objects can not be re-analyzed from this interface."
         )
-
 
 
 class Detection:
