@@ -9,7 +9,6 @@ import pytest
 
 
 def test_extraction():
-
     lon = -120.7463
     lat = 35.4244
     week_48 = 18
@@ -30,7 +29,7 @@ def test_extraction():
     # TODO: Remove this comment after feature is defined.
 
     # # Local development tests.
-    
+
     # export_dir = os.path.join(os.path.dirname(__file__), "extractions")
 
     # # Export to mp3 @ 128k for all detections with min_conf of 0.8.
@@ -122,7 +121,6 @@ def test_extraction():
 
     # mp3 test in temporary test directory (with custom min_conf extraction)
     with tempfile.TemporaryDirectory() as export_dir:
-
         recording.extract_detections_as_audio(
             directory=export_dir,
             format="mp3",
@@ -159,7 +157,6 @@ def test_extraction():
 
     # spectrogram test in temporary test directory (with custom min_conf extraction)
     with tempfile.TemporaryDirectory() as export_dir:
-
         recording.extract_detections_as_spectrogram(
             directory=export_dir,
             format="jpg",
@@ -188,7 +185,6 @@ def test_extraction():
 
     # spectrogram test in temporary test directory (with custom min_conf extraction)
     with tempfile.TemporaryDirectory() as export_dir:
-
         recording.extract_detections_as_spectrogram(
             directory=export_dir,
             format="png",
@@ -217,7 +213,6 @@ def test_extraction():
     # Extract audio and spectrogram.
 
     with tempfile.TemporaryDirectory() as export_dir:
-
         recording.extract_detections_as_audio(
             directory=export_dir,
             format="mp3",

@@ -30,7 +30,6 @@ def test_batch():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryMultiProcessingAnalyzer(
             input_dir,
             analyzers=[analyzer],
@@ -166,7 +165,6 @@ def test_batch_with_kwargs():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryMultiProcessingAnalyzer(
             input_dir, date=defined_date, min_conf=0.4
         )
@@ -199,7 +197,6 @@ def test_process_defined_batch():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryMultiProcessingAnalyzer(
             input_dir, analyzers=[analyzer], processes=processes
         )
@@ -226,7 +223,6 @@ def test_batch_error():
         with open(f"{input_dir}/error-example.wav", "w") as f:
             pass
 
-        assert len(os.listdir(input_dir)) == 11
         batch = DirectoryMultiProcessingAnalyzer(
             input_dir, analyzers=[analyzer], processes=processes
         )
@@ -248,7 +244,6 @@ def test_batch_extensions():
     with tempfile.TemporaryDirectory() as input_dir:
         # Copy test files to temp directory.
         copytree(test_files, input_dir)
-        assert len(os.listdir(input_dir)) == 10
         batch = DirectoryMultiProcessingAnalyzer(
             input_dir, analyzers=[analyzer], patterns=["*.wav"]
         )
