@@ -270,9 +270,9 @@ def test_exceptions():
 # def test_large_single(filepath):
 #     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
-#     lon = -120.7463
-#     lat = 35.4244
-#     week_48 = 18
+#     lon = -120
+#     lat = 39
+#     week_48 = 12
 #     min_conf = 0.25
 #     input_path = os.path.join(os.path.dirname(__file__), filepath)
 
@@ -295,7 +295,7 @@ def test_exceptions():
 
 #     print("recording.detections", len(recording.detections))
 #     assert (
-#         len(analyzer.custom_species_list) == 141
+#         len(analyzer.custom_species_list) == 148
 #     )  # Check that this matches the number printed by the cli version.
 
 #     # Check that detection confidence is float.

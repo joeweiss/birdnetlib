@@ -520,7 +520,7 @@ class LargeRecordingAnalyzer(Analyzer):
 
         for segment in read_audio_segments(recording.path, sr=48000):
             c = segment["segment"]
-            if len(c) < 3 * 48000:
+            if len(c) < recording.sample_secs * 48000:
                 # If below the minimum segment duration, continue.
                 del c
                 continue

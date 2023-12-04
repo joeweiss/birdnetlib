@@ -386,6 +386,8 @@ class LargeRecording(Recording):
         # Set the file duration (does not read full audio into memory)
         self.duration = librosa.get_duration(filename=self.path)
 
+        # TODO: overlay is currently incompatible with LargeRecording. Implement this feature.
+
         # Analyze, though do not read the file all at once.
         self.analyzer.analyze_recording(self)
         self.analyzed = True
