@@ -8,6 +8,9 @@ import csv
 import time
 import json
 import pydub
+import librosa
+import numpy as np
+from birdnetlib.utils import read_audio_segments
 
 
 LOG_FILE = "log.txt"
@@ -264,7 +267,9 @@ def test_exceptions():
 # @pytest.mark.parametrize(
 #     "filepath",
 #     [
-#         "test_files/edge_cases/NV017_20200331_120000.wav",
+#         "test_files/22min/22m00s_32kHz_mono.flac",
+#         # "test_files/22min/22m00s_48kHz_mono.wav",
+#         # "test_files/edge_cases/NV017_20200331_120000.wav",
 #     ],
 # )
 # def test_large_single(filepath):
@@ -303,3 +308,63 @@ def test_exceptions():
 
 #     # Check that detection confidence is float.
 #     assert isinstance(recording.detections[0]["confidence"], float)
+
+
+@pytest.mark.parametrize(
+    "filepath",
+    [
+        # "test_files/22min/22m00s_48kHz_mono.wav",
+        "test_files/22min/22m00s_32kHz_mono.flac",
+        "test_files/22min/22m00s_48kHz_mono.mp3",
+        "test_files/22min/22m00s_48kHz_mono.flac",
+    ],
+)
+def test_librosa(filepath):
+    # Test the librosa segmenting reader.
+
+    input_path = os.path.join(os.path.dirname(__file__), filepath)
+    arr_0_5_a, sr = librosa.load(input_path, sr=48000, mono=True, offset=0, duration=5)
+    arr_0_5_b, sr = librosa.load(input_path, sr=48000, mono=True, offset=0, duration=5)
+
+    # Confirm assertion works.
+    assert np.array_equal(arr_0_5_a, arr_0_5_b)
+
+    # Use read_audio_segments
+    segment_generator = read_audio_segments(
+        input_path, chunk_duration=10, segment_duration=5
+    )
+
+    # Get the first two items only from the seg generator.
+    results = []
+    for item in segment_generator:
+        results.append(item)
+        if len(results) == 2:
+            break
+
+    arr_0_5_gen = results[0]["segment"]
+
+    assert len(arr_0_5_a) == len(arr_0_5_gen)
+    assert np.array_equal(arr_0_5_a[0:48000], arr_0_5_gen[0:48000])
+
+    arr_5_10, sr = librosa.load(input_path, sr=48000, mono=True, offset=5, duration=5)
+    arr_5_10_gen = results[1]["segment"]
+
+    # Test for almost equality (accounting for tiny diff with 32k to 48k resampling diffs)
+    is_almost_equal = are_audio_arrays_almost_equal(arr_5_10, arr_5_10_gen)
+    assert is_almost_equal
+    assert len(arr_5_10) == len(arr_5_10_gen)
+
+    # Check that assertion works by forcing a 32000 file.
+    arr_0_5_32k, sr = librosa.load(input_path, sr=32000, offset=0, duration=5)
+    assert not np.array_equal(arr_0_5_a, arr_0_5_32k)
+
+
+def are_audio_arrays_almost_equal(audio1, audio2, tolerance=0.0000000001):
+    if audio1.shape != audio2.shape:
+        return False
+
+    # Calculate the Mean Squared Error (MSE) between the two audio arrays
+    mse = np.mean((audio1 - audio2) ** 2)
+
+    # Compare the MSE with a tolerance value
+    return mse <= tolerance
