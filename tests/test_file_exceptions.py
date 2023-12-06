@@ -1,5 +1,5 @@
-from birdnetlib import Recording
-from birdnetlib.analyzer import Analyzer
+from birdnetlib import Recording, LargeRecording
+from birdnetlib.analyzer import Analyzer, LargeRecordingAnalyzer
 from birdnetlib.analyzer_lite import LiteAnalyzer
 import os
 import pytest
@@ -7,8 +7,8 @@ import pytest
 from birdnetlib.exceptions import AudioFormatError, AnalyzerRuntimeWarning
 
 
+@pytest.mark.exception
 def test_analyzer_exceptions():
-
     analyzer = Analyzer()
 
     # Test that a non-audio file throws an appropriate exception.
@@ -28,9 +28,16 @@ def test_analyzer_exceptions():
         recording.analyze()
     assert str(excinfo.value) == "Audio format could not be opened."
 
+    # Import an file that's not an audio file (with LargeRecording classes)
+    large_analyzer = LargeRecordingAnalyzer()
+    input_path = os.path.join(os.path.dirname(__file__), "test_files/species_list.txt")
+    with pytest.raises(AudioFormatError) as excinfo:
+        recording = LargeRecording(large_analyzer, input_path)
+        recording.analyze()
+    assert str(excinfo.value) == "Audio format could not be opened."
+
 
 def test_lite_analyzer_exceptions():
-
     analyzer = LiteAnalyzer()
 
     # Test that a non-audio file throws an appropriate exception.

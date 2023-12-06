@@ -384,7 +384,18 @@ class LargeRecording(Recording):
             self.week_48 = return_week_48_from_datetime(self.date)
 
         # Set the file duration (does not read full audio into memory)
-        self.duration = librosa.get_duration(filename=self.path)
+        # NOTE: This is the first opportunity for LR to read the file, so check for errors.
+        try:
+            self.duration = librosa.get_duration(filename=self.path)
+        except audioread.exceptions.NoBackendError as e:
+            print(e)
+            raise AudioFormatError("Audio format could not be opened.")
+        except FileNotFoundError as e:
+            print(e)
+            raise e
+        except BaseException as e:
+            print(e)
+            raise AudioFormatError("Generic audio read error occurred from librosa.")
 
         # TODO: overlay is currently incompatible with LargeRecording. Implement this feature.
 
