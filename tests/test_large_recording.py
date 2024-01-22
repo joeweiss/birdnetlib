@@ -108,7 +108,7 @@ def test_large_with_analyzer(filepath, cls_type):
     # Check that birdnetlib results match command line results.
     assert len(recording.detections) == len(commandline_results)
     assert (
-        len(analyzer.custom_species_list) == 141
+        len(analyzer.custom_species_list) == 195
     )  # Check that this matches the number printed by the cli version.
 
     # Check that detection confidence is float.

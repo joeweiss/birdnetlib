@@ -11,7 +11,7 @@ from birdnetlib.utils import return_week_48_from_datetime
 
 SPECIES_MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
-    "models/analyzer/BirdNET_GLOBAL_6K_V2.4_MData_Model_FP16.tflite",
+    "models/analyzer/BirdNET_GLOBAL_6K_V2.4_MData_Model_V2_FP16.tflite",
 )
 LABEL_PATH = os.path.join(
     os.path.dirname(__file__), "models/analyzer/BirdNET_GLOBAL_6K_V2.4_Labels.txt"
