@@ -29,6 +29,7 @@ class RecordingBase:
         lon=None,
         min_conf=0.1,
         overlap=0.0,
+        return_all_detections=False,
     ):
         self.analyzer = analyzer
         self.detections_dict = {}  # Old format
@@ -46,6 +47,7 @@ class RecordingBase:
         self.ndarray = None
         self.extracted_audio_paths = {}
         self.extracted_spectrogram_paths = {}
+        self.return_all_detections = return_all_detections
 
     def analyze(self):
         # Check that analyzer is not LargeRecordingAnalyzer
@@ -78,25 +80,38 @@ class RecordingBase:
         qualified_detections = []
         allow_list = self.analyzer.custom_species_list
         for d in self.detection_list:
-            if d.confidence > self.minimum_confidence and (
-                f"{d.scientific_name}_{d.common_name}" in allow_list
-                or len(allow_list) == 0
-            ):
-                detection = d.as_dict
-
-                # Add extraction paths if available.
-                extraction_key = f"{detection['start_time']}_{detection['end_time']}"
-                audio_file_path = self.extracted_audio_paths.get(extraction_key, None)
-                if audio_file_path:
-                    detection["extracted_audio_path"] = audio_file_path
-                spectrogram_file_path = self.extracted_spectrogram_paths.get(
-                    extraction_key, None
-                )
-                if spectrogram_file_path:
-                    detection["extracted_spectrogram_path"] = spectrogram_file_path
-                qualified_detections.append(detection)
+            if self.return_all_detections:
+                if d.confidence > self.minimum_confidence:
+                    detection = self.return_detection_dict(d)
+                    detection["is_predicted_for_location_and_date"] = (
+                        f"{d.scientific_name}_{d.common_name}" in allow_list
+                    )
+                    qualified_detections.append(detection)
+            else:
+                if d.confidence > self.minimum_confidence and (
+                    f"{d.scientific_name}_{d.common_name}" in allow_list
+                    or len(allow_list) == 0
+                ):
+                    detection = self.return_detection_dict(d)
+                    qualified_detections.append(detection)
 
         return qualified_detections
+
+    def return_detection_dict(self, detection_obj):
+        detection = detection_obj.as_dict
+
+        # Add extraction paths if available.
+        extraction_key = f"{detection['start_time']}_{detection['end_time']}"
+        audio_file_path = self.extracted_audio_paths.get(extraction_key, None)
+        if audio_file_path:
+            detection["extracted_audio_path"] = audio_file_path
+        spectrogram_file_path = self.extracted_spectrogram_paths.get(
+            extraction_key, None
+        )
+        if spectrogram_file_path:
+            detection["extracted_spectrogram_path"] = spectrogram_file_path
+
+        return detection
 
     @property
     def as_dict(self):
@@ -244,12 +259,21 @@ class Recording(RecordingBase):
         lon=None,
         min_conf=0.1,
         overlap=0.0,
+        return_all_detections=False,
     ):
         self.path = path
         p = Path(self.path)
         self.filestem = p.stem
         super().__init__(
-            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+            analyzer,
+            week_48,
+            date,
+            sensitivity,
+            lat,
+            lon,
+            min_conf,
+            overlap,
+            return_all_detections,
         )
 
     @property
@@ -290,11 +314,20 @@ class RecordingBuffer(RecordingBase):
         lon=None,
         min_conf=0.1,
         overlap=0.0,
+        return_all_detections=False,
     ):
         self.buffer = buffer
         self.rate = rate
         super().__init__(
-            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+            analyzer,
+            week_48,
+            date,
+            sensitivity,
+            lat,
+            lon,
+            min_conf,
+            overlap,
+            return_all_detections,
         )
 
     @property
@@ -319,10 +352,19 @@ class RecordingFileObject(RecordingBase):
         lon=None,
         min_conf=0.1,
         overlap=0.0,
+        return_all_detections=False,
     ):
         self.file_obj = file_obj
         super().__init__(
-            analyzer, week_48, date, sensitivity, lat, lon, min_conf, overlap
+            analyzer,
+            week_48,
+            date,
+            sensitivity,
+            lat,
+            lon,
+            min_conf,
+            overlap,
+            return_all_detections,
         )
 
     @property
@@ -362,9 +404,19 @@ class LargeRecording(Recording):
         lon=None,
         min_conf=0.1,
         overlap=0,
+        return_all_detections=False,
     ):
         super().__init__(
-            analyzer, path, week_48, date, sensitivity, lat, lon, min_conf, overlap
+            analyzer,
+            path,
+            week_48,
+            date,
+            sensitivity,
+            lat,
+            lon,
+            min_conf,
+            overlap,
+            return_all_detections,
         )
 
     def analyze(self):

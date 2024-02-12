@@ -26,6 +26,49 @@ recording.analyze()
 print(recording.detections)
 ```
 
+All recording classes can accept an optional lat, lon and date arguments, which will limit the detections to species to those predicted to be included.
+
+```python
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    min_conf=0.25,
+    lat=35.6,
+    lon=-77.3,
+    date=datetime(year=2023, month=6, day=27),
+)
+recording.analyze()
+print(recording.detections)
+```
+
+It is also possible to return all detections, but annotate the detection if the species is on the predicted list for that location and date.
+
+```python
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+
+analyzer = Analyzer()
+
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+    min_conf=0.25,
+    lat=35.6,
+    lon=-77.3,
+    date=datetime(year=2023, month=6, day=27),
+    is_predicted_for_location_and_date=True,
+)
+recording.analyze()
+print(recording.detections)
+```
+
+
+
 ### RecordingFileObject
 
 Use the `RecordingFileObject` class to analyze an in-memory file object.

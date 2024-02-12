@@ -58,18 +58,24 @@ def test_without_species_list():
         lon=lon,
         week_48=week_48,
         min_conf=min_conf,
+        return_all_detections=True,
     )
     recording.analyze()
     pprint(recording.detections)
 
     # Check that birdnetlib results match command line results.
-    assert len(recording.detections) == len(commandline_results)
+    assert len(recording.detections) == 25
+    # Check those that are predicted for location/date.
+    detections_species_predicted = [
+        i for i in recording.detections if i["is_predicted_for_location_and_date"]
+    ]
+    assert len(detections_species_predicted) == len(commandline_results)
     assert (
         len(analyzer.custom_species_list) == 195
     )  # Check that this matches the number printed by the cli version.
 
     # Check that detection confidence is float.
-    assert type(recording.detections[0]["confidence"]) is float
+    assert isinstance(recording.detections[0]["confidence"], float)
 
 
 def test_with_species_list_path():
