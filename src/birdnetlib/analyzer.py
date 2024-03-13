@@ -410,45 +410,36 @@ class Analyzer:
         print(len(species_list), "species loaded.")
 
     # Custom models.
+    def _return_embeddings(self, data):
+        self.interpreter.resize_tensor_input(
+            self.input_layer_index, [len(data), *data[0].shape]
+        )
+        self.interpreter.allocate_tensors()
+        # Extract feature embeddings
+        self.interpreter.set_tensor(
+            self.input_layer_index, np.array(data, dtype="float32")
+        )
+        self.interpreter.invoke()
+        features = self.interpreter.get_tensor(self.output_layer_index)
+        return features
 
     def predict_with_custom_classifier(self, sample):
-        # print("predict_with_custom_classifier")
-
         data = np.array([sample], dtype="float32")
-        # print(data[0])
-
-        # Make a prediction (Audio only for now)
-        INTERPRETER = self.interpreter
-        INPUT_LAYER_INDEX = self.input_layer_index
-        OUTPUT_LAYER_INDEX = self.output_layer_index
-
-        INTERPRETER.resize_tensor_input(INPUT_LAYER_INDEX, [len(data), *data[0].shape])
-        INTERPRETER.allocate_tensors()
-
-        # Extract feature embeddings
-        INTERPRETER.set_tensor(INPUT_LAYER_INDEX, np.array(data, dtype="float32"))
-        INTERPRETER.invoke()
-        features = INTERPRETER.get_tensor(OUTPUT_LAYER_INDEX)
-
-        feature_vector = features
-
-        C_INTERPRETER = self.custom_interpreter
-        C_INPUT_LAYER_INDEX = self.custom_input_layer_index
-        C_OUTPUT_LAYER_INDEX = self.custom_output_layer_index
-
-        C_INTERPRETER.resize_tensor_input(
-            C_INPUT_LAYER_INDEX, [len(feature_vector), *feature_vector[0].shape]
+        input_details = self.custom_interpreter.get_input_details()
+        input_size = input_details[0]["shape"][-1]
+        feature_vector = self._return_embeddings(data) if input_size != 144000 else data
+        self.custom_interpreter.resize_tensor_input(
+            self.custom_input_layer_index,
+            [len(feature_vector), *feature_vector[0].shape],
         )
-        C_INTERPRETER.allocate_tensors()
+        self.custom_interpreter.allocate_tensors()
 
         # Make a prediction
-        C_INTERPRETER.set_tensor(
-            C_INPUT_LAYER_INDEX, np.array(feature_vector, dtype="float32")
+        self.custom_interpreter.set_tensor(
+            self.custom_input_layer_index, np.array(feature_vector, dtype="float32")
         )
-        C_INTERPRETER.invoke()
-        prediction = C_INTERPRETER.get_tensor(C_OUTPUT_LAYER_INDEX)
-
-        # print(prediction)
+        self.custom_interpreter.invoke()
+        prediction = self.custom_interpreter.get_tensor(self.custom_output_layer_index)
 
         # Logits or sigmoid activations?
         APPLY_SIGMOID = True
@@ -457,7 +448,6 @@ class Analyzer:
             prediction = self.flat_sigmoid(
                 np.array(prediction), sensitivity=-SIGMOID_SENSITIVITY
             )
-
         return prediction
 
     def load_custom_models(self):
