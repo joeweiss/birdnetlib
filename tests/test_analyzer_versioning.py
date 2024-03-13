@@ -12,6 +12,7 @@ import tempfile
 # The commit numbers refer to the commit of the model release on BirdNET-Analyzer.
 # NOTE: These models need to be mirrored to the birdnet-models-nc-sa repo prior to inclusion here.
 VERSION_SHAS_TO_TEST = {
+    "2.4.1": "9e23983b18ccfbcc75416e066ad889efe0563456",
     "2.4": "b32cdc54c9f2344b028e6378e9eae66e39110d27",
     "2.3": "3d88880b82acb826e4a94c63b7d4f400a1e1efaa",
     "2.2": "cb3707813f4465922823bcfba31358f6c5d0c370",
@@ -43,28 +44,35 @@ def test_downloading_models():
     # Test downloading models by version string or version number.
 
     # Initialize analyzer current included along with the library, will not download.
+
+    version = "2.4.1"
+    analyzer = Analyzer(version=version)
+    assert analyzer.model_download_was_required is True
+    assert analyzer.version == version
+    assert analyzer.version_date == datetime(year=2024, month=1, day=15)
+
     version = "2.4"
     analyzer = Analyzer(version=version)
-    assert analyzer.model_download_was_required == False
+    assert analyzer.model_download_was_required is False
     assert analyzer.version == version
     assert analyzer.version_date == datetime(year=2023, month=6, day=1)
 
     version = "2.3"
     analyzer = Analyzer(version=version)
-    assert analyzer.model_download_was_required == True
+    assert analyzer.model_download_was_required is True
     assert analyzer.version == version
     assert analyzer.version_date == datetime(year=2023, month=4, day=26)
 
     version = 2.2  # Test by version float.
     analyzer = Analyzer(version=version)
-    assert analyzer.model_download_was_required == True
+    assert analyzer.model_download_was_required is True
     assert analyzer.version == "2.2"
     assert analyzer.version_date == datetime(year=2022, month=8, day=16)
 
     # Test on second run (should not have to re-download)
     version = "2.2"
     analyzer = Analyzer(version=version)
-    assert analyzer.model_download_was_required == False
+    assert analyzer.model_download_was_required is False
     assert analyzer.version_date == datetime(year=2022, month=8, day=16)
 
     # Test exception raised when using a unavailable version
@@ -174,6 +182,6 @@ def check_version_results_against_commandline(version):
     )
 
     # Check that detection confidence is float.
-    assert type(lib_detection["confidence"]) is float
+    assert isinstance(lib_detection["confidence"], float)
 
     assert recording.analyzer.version == str(version)
