@@ -9,6 +9,10 @@ docker-compose up -d
 docker-compose exec main pip install -r dev/docker-m1-requirements.txt
 docker-compose exec main pytest
 
+# To skip the multithread tests ...
+docker-compose exec main pytest -m "not omit_during_ghactions"
+
+
 ```
 
 ## Ubuntu 22
