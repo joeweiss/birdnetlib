@@ -35,6 +35,8 @@ class RecordingBase:
         self.detections_dict = {}  # Old format
         self.detection_list = []
         self.analyzed = False
+        self.embeddings_extracted = False
+        self.embeddings_list = []
         self.week_48 = week_48
         self.date = date
         self.sensitivity = max(0.5, min(1.0 - (sensitivity - 1.0), 1.5))
@@ -69,6 +71,28 @@ class RecordingBase:
         self.read_audio_data()
         self.analyzer.analyze_recording(self)
         self.analyzed = True
+
+    def extract_embeddings(self):
+        # Check that analyzer is not LargeRecordingAnalyzer
+        if isinstance(self.analyzer, LargeRecordingAnalyzer):
+            raise IncompatibleAnalyzerError(
+                "LargeRecordingAnalyzer can only be used with the LargeRecording class"
+            )
+
+        # Read and analyze.
+        self.read_audio_data()
+        self.analyzer.extract_embeddings_for_recording(self)
+        self.embeddings_list = self.analyzer.embeddings
+        self.embeddings_extracted = True
+
+    @property
+    def embeddings(self):
+        if not self.embeddings_extracted:
+            warnings.warn(
+                "'extract_embeddings' method has not been called. Call .extract_embeddings() before accessing embeddings.",
+                AnalyzerRuntimeWarning,
+            )
+        return self.embeddings_list
 
     @property
     def detections(self):
