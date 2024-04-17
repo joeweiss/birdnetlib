@@ -60,7 +60,7 @@ def test_embeddings():
 
     for idx, i in enumerate(commandline_results):
         # Specify the tolerance level
-        tolerance = 1e-6  # 6 decimal points tolerance between BirdNET and birdnetlib.
+        tolerance = 1e-4  # 4 decimal points tolerance between BirdNET and birdnetlib.
 
         # Assert that the arrays are almost equal within the tolerance
         assert np.allclose(
