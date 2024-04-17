@@ -479,6 +479,11 @@ class LargeRecording(Recording):
         self.analyzer.analyze_recording(self)
         self.analyzed = True
 
+    def extract_embeddings(self):
+        raise NotImplementedError(
+            "Extraction of embeddings is not yet implemented for LargeRecordingAnalyzer. Use Analyzer if possible."
+        )
+
     def get_extract_array(self, start_sec, end_sec):
         # Returns ndarray trimmed for start_sec:end_sec
         print(start_sec, end_sec)
