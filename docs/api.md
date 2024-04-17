@@ -67,7 +67,22 @@ recording.analyze()
 print(recording.detections)
 ```
 
+#### Embeddings
 
+To extract feature embeddings instead of class predictions, use the `extract_embeddings` method.
+
+```python
+from birdnetlib import Recording
+from birdnetlib.analyzer import Analyzer
+
+analyzer = Analyzer()
+recording = Recording(
+    analyzer,
+    "sample.mp3",
+)
+recording.extract_embeddings()
+print(recording.embeddings)
+```
 
 ### RecordingFileObject
 
