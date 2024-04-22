@@ -85,6 +85,7 @@ class Analyzer:
 
         self.labels = []
         self.results = []
+        self.embeddings = []
         self.custom_species_list = []
 
         # Set model versions.
@@ -362,6 +363,22 @@ class Analyzer:
         self.results = results
         recording.detection_list = self.detections
 
+    def extract_embeddings_for_recording(self, recording):
+        print("extract_embeddings_for_recording", recording.filename)
+        start = 0
+        end = recording.sample_secs
+        results = []
+        for sample in recording.chunks:
+            data = np.array([sample], dtype="float32")
+            e = self._return_embeddings(data)[0].tolist()
+            results.append({"start_time": start, "end_time": end, "embeddings": e})
+
+            # Increment start and end
+            start += recording.sample_secs - recording.overlap
+            end = start + recording.sample_secs
+
+        self.embeddings = results
+
     def load_model(self):
         print("load model", not self.use_custom_classifier)
         # Load TFLite model and allocate tensors.
@@ -420,7 +437,13 @@ class Analyzer:
             self.input_layer_index, np.array(data, dtype="float32")
         )
         self.interpreter.invoke()
-        features = self.interpreter.get_tensor(self.output_layer_index)
+
+        # Embeddings uses custom classifier output layer index.
+        output_layer_index = self.output_layer_index
+        if not self.use_custom_classifier:
+            output_layer_index = output_layer_index - 1
+
+        features = self.interpreter.get_tensor(output_layer_index)
         return features
 
     def predict_with_custom_classifier(self, sample):
