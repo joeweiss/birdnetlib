@@ -492,7 +492,7 @@ class LargeRecording(Recording):
             self.path,
             sr=sr,
             mono=True,
-            offset=start_sec / sr,
+            offset=start_sec,
             duration=(end_sec - start_sec),
         )
 
