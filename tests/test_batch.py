@@ -4,8 +4,6 @@ import tempfile
 import shutil
 import os
 
-# from pprint import pprint
-
 
 def copytree(src, dst, symlinks=False, ignore=None):
     # Works on 3.7+
