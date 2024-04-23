@@ -30,7 +30,7 @@ def test_batch():
             analyzers=[analyzer],
         )
         batch.process()
-        assert len(batch.directory_recordings) == 5
+        assert len(batch.directory_recordings) == 7
         # Ensure path is a string rather than PosixPath
         assert type(batch.directory_recordings[0].path).__name__ == "str"
 
@@ -44,4 +44,4 @@ def test_batch_extensions():
         copytree(test_files, input_dir)
         batch = DirectoryAnalyzer(input_dir, analyzers=[analyzer], patterns=["*.wav"])
         batch.process()
-        assert len(batch.directory_recordings) == 2
+        assert len(batch.directory_recordings) == 4
