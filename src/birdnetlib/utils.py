@@ -36,6 +36,7 @@ def read_audio_segments(
             mono=True,
             offset=start_sample / sr,
             duration=chunk_duration,
+            res_type="kaiser_fast",
         )
 
         # Check if the chunk is empty, indicating the end of the file

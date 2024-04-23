@@ -494,6 +494,7 @@ class LargeRecording(Recording):
             mono=True,
             offset=start_sec,
             duration=(end_sec - start_sec),
+            res_type="kaiser_fast",
         )
 
         return audio_chunk

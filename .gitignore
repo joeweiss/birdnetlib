@@ -142,6 +142,7 @@ examples/*.flac
 tests/custom_files
 tests/test_analyzer_custom.py
 tests/test_files/edge_cases/*
+tests/test_files/remote*
 
 _data
 tests/test_files/22min/22m00s_48kHz_mono.wav

@@ -323,8 +323,12 @@ def test_librosa(filepath):
     # Test the librosa segmenting reader.
 
     input_path = os.path.join(os.path.dirname(__file__), filepath)
-    arr_0_5_a, sr = librosa.load(input_path, sr=48000, mono=True, offset=0, duration=5)
-    arr_0_5_b, sr = librosa.load(input_path, sr=48000, mono=True, offset=0, duration=5)
+    arr_0_5_a, sr = librosa.load(
+        input_path, sr=48000, mono=True, offset=0, duration=5, res_type="kaiser_fast"
+    )
+    arr_0_5_b, sr = librosa.load(
+        input_path, sr=48000, mono=True, offset=0, duration=5, res_type="kaiser_fast"
+    )
 
     # Confirm assertion works.
     assert np.array_equal(arr_0_5_a, arr_0_5_b)
@@ -346,7 +350,9 @@ def test_librosa(filepath):
     assert len(arr_0_5_a) == len(arr_0_5_gen)
     assert np.array_equal(arr_0_5_a[0:48000], arr_0_5_gen[0:48000])
 
-    arr_5_10, sr = librosa.load(input_path, sr=48000, mono=True, offset=5, duration=5)
+    arr_5_10, sr = librosa.load(
+        input_path, sr=48000, mono=True, offset=5, duration=5, res_type="kaiser_fast"
+    )
     arr_5_10_gen = results[1]["segment"]
 
     # Test for almost equality (accounting for tiny diff with 32k to 48k resampling diffs)
@@ -355,7 +361,9 @@ def test_librosa(filepath):
     assert len(arr_5_10) == len(arr_5_10_gen)
 
     # Check that assertion works by forcing a 32000 file.
-    arr_0_5_32k, sr = librosa.load(input_path, sr=32000, offset=0, duration=5)
+    arr_0_5_32k, sr = librosa.load(
+        input_path, sr=32000, offset=0, duration=5, res_type="kaiser_fast"
+    )
     assert not np.array_equal(arr_0_5_a, arr_0_5_32k)
 
 
@@ -368,3 +376,156 @@ def are_audio_arrays_almost_equal(audio1, audio2, tolerance=0.0000000001):
 
     # Compare the MSE with a tolerance value
     return mse <= tolerance
+
+
+@pytest.mark.parametrize(
+    "filepath",
+    [
+        "test_files/audio.mp3",
+        "test_files/2022-08-15-21-05-51.wav",
+        "test_files/22min/22m00s_32kHz_mono.flac",
+        "test_files/22min/22m00s_48kHz_mono.mp3",
+        "test_files/22min/22m00s_48kHz_mono.flac",
+    ],
+)
+def test_long_files_analyzer(filepath):
+    # Process file with command line utility, then process with python library and ensure equal commandline_results.
+
+    min_conf = 0.1
+    input_path = os.path.join(os.path.dirname(__file__), filepath)
+
+    tf = tempfile.NamedTemporaryFile(suffix=".csv")
+    output_path = tf.name
+
+    # Process using python script as is.
+    birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
+
+    cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --rtype=csv"
+    print(cmd)
+    os.system(f"cd {birdnet_analyzer_path}; {cmd}")
+
+    with open(tf.name) as f:
+        for line in f:
+            print(line)
+
+    with open(tf.name, newline="") as csvfile:
+        # reader = csv.reader(csvfile, delimiter=";", quotechar="|")
+        reader = csv.DictReader(csvfile)
+        commandline_results = []
+        for row in reader:
+            commandline_results.append(
+                {
+                    "start_time": float(row["Start (s)"]),
+                    "end_time": float(row["End (s)"]),
+                    "common_name": row["Common name"],
+                    "scientific_name": row["Scientific name"],
+                    "confidence": float(row["Confidence"]),
+                }
+            )
+
+    # pprint(commandline_results)
+    assert len(commandline_results) > 0
+
+    # Normal file method, for comparison and memory profiling.
+    # This can be observed with top or a pytest memory profiler.
+    large_analyzer = LargeRecordingAnalyzer()
+    large_recording = LargeRecording(
+        large_analyzer,
+        input_path,
+        min_conf=min_conf,
+    )
+    large_recording.analyze()
+
+    # Normal method.
+    analyzer = Analyzer()
+    recording = Recording(
+        analyzer,
+        input_path,
+        min_conf=min_conf,
+    )
+    recording.analyze()
+
+    print("normal", len(recording.detections))
+    print("large", len(large_recording.detections))
+    print("cmdline", len(commandline_results))
+
+    recording_list = [
+        {
+            "name": i["common_name"],
+            "time": i["start_time"],
+            "confidence": i["confidence"],
+        }
+        for i in recording.detections
+    ]
+    lg_list = [
+        {
+            "name": i["common_name"],
+            "time": i["start_time"],
+            "confidence": i["confidence"],
+        }
+        for i in large_recording.detections
+    ]
+    c_list = [
+        {
+            "name": i["common_name"],
+            "time": i["start_time"],
+            "confidence": i["confidence"],
+        }
+        for i in commandline_results
+    ]
+
+    assert arrays_equal(recording_list, lg_list, tolerance=0.001)
+    assert arrays_equal(recording_list, c_list, tolerance=0.001)
+
+
+def arrays_equal(arr1, arr2, tolerance=0.001):
+    if len(arr1) != len(arr2):
+        return False
+
+    for dict1, dict2 in zip(arr1, arr2):
+        if dict1.keys() != dict2.keys():
+            return False
+        for key in dict1:
+            if key == "confidence":
+                if not (abs(dict1[key] - dict2[key]) <= tolerance):
+                    return False
+            elif dict1[key] != dict2[key]:
+                return False
+    return True
+
+
+def diff_between_dicts(arr1, arr2):
+    # Convert list of dictionaries to a set of frozensets to make them hashable and comparable
+    set1 = {frozenset(d.items()) for d in arr1}
+    set2 = {frozenset(d.items()) for d in arr2}
+
+    # Find differences between the two sets
+    unique_to_arr1 = [dict(s) for s in set1 - set2]
+    unique_to_arr2 = [dict(s) for s in set2 - set1]
+
+    return unique_to_arr1, unique_to_arr2
+
+
+def test_quick():
+    filepath = "test_files/22min/22m00s_32kHz_mono.flac"
+    filepath = "test_files/small_32k.wav"
+    min_conf = 0.1
+    input_path = os.path.join(os.path.dirname(__file__), filepath)
+
+    # Normal file method, for comparison and memory profiling.
+    # This can be observed with top or a pytest memory profiler.
+    large_analyzer = LargeRecordingAnalyzer()
+    large_recording = LargeRecording(
+        large_analyzer,
+        input_path,
+        min_conf=min_conf,
+    )
+    large_recording.analyze()
+
+    # assert (
+    #     len(large_recording.detections) == 440
+    # )  # This is the result from Recording() and command line.
+
+    assert (
+        len(large_recording.detections) == 99
+    )  # This is the result from Recording() and command line.
