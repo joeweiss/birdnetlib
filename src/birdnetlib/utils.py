@@ -30,14 +30,18 @@ def read_audio_segments(
     start_sample = 0
 
     while True:
-        audio_chunk, _ = librosa.load(
-            file_path,
-            sr=sr,
-            mono=True,
-            offset=start_sample / sr,
-            duration=chunk_duration,
-            res_type="kaiser_fast",
-        )
+        try:
+            audio_chunk, _ = librosa.load(
+                file_path,
+                sr=sr,
+                mono=True,
+                offset=start_sample / sr,
+                duration=chunk_duration,
+                res_type="kaiser_fast",
+            )
+        except ValueError:
+            # Specifically to catch "ValueError: Input signal length=0 is too small to resample"
+            break
 
         # Check if the chunk is empty, indicating the end of the file
         if not audio_chunk.any():
