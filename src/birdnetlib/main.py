@@ -51,6 +51,7 @@ class RecordingBase:
         self.extracted_audio_paths = {}
         self.extracted_spectrogram_paths = {}
         self.return_all_detections = return_all_detections
+        self.verbose = verbose
 
     def analyze(self):
         # Check that analyzer is not LargeRecordingAnalyzer
