@@ -30,6 +30,7 @@ class RecordingBase:
         min_conf=0.1,
         overlap=0.0,
         return_all_detections=False,
+        verbose=True,
     ):
         self.analyzer = analyzer
         self.detections_dict = {}  # Old format
@@ -169,8 +170,8 @@ class RecordingBase:
             chunks.append(split)
 
         self.chunks = chunks
-
-        print("read_audio_data: complete, read ", str(len(self.chunks)), "chunks.")
+        if self.verbose:
+            print("read_audio_data: complete, read ", str(len(self.chunks)), "chunks.")
 
     def get_extract_array(self, start_sec, end_sec):
         # Returns ndarray trimmed for start_sec:end_sec
@@ -278,6 +279,7 @@ class Recording(RecordingBase):
         min_conf=0.1,
         overlap=0.0,
         return_all_detections=False,
+        **kwargs,
     ):
         self.path = path
         p = Path(self.path)
@@ -292,6 +294,7 @@ class Recording(RecordingBase):
             min_conf,
             overlap,
             return_all_detections,
+            **kwargs,
         )
 
     @property
@@ -333,6 +336,7 @@ class RecordingBuffer(RecordingBase):
         min_conf=0.1,
         overlap=0.0,
         return_all_detections=False,
+        **kwargs,
     ):
         self.buffer = buffer
         self.rate = rate
@@ -346,6 +350,7 @@ class RecordingBuffer(RecordingBase):
             min_conf,
             overlap,
             return_all_detections,
+            **kwargs,
         )
 
     @property
@@ -371,6 +376,7 @@ class RecordingFileObject(RecordingBase):
         min_conf=0.1,
         overlap=0.0,
         return_all_detections=False,
+        **kwargs,
     ):
         self.file_obj = file_obj
         super().__init__(
@@ -383,6 +389,7 @@ class RecordingFileObject(RecordingBase):
             min_conf,
             overlap,
             return_all_detections,
+            **kwargs,
         )
 
     @property
@@ -423,6 +430,7 @@ class LargeRecording(Recording):
         min_conf=0.1,
         overlap=0,
         return_all_detections=False,
+        **kwargs,
     ):
         super().__init__(
             analyzer,
@@ -435,6 +443,7 @@ class LargeRecording(Recording):
             min_conf,
             overlap,
             return_all_detections,
+            **kwargs,
         )
 
     def analyze(self):
