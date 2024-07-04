@@ -1,6 +1,5 @@
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
-from birdnetlib.analyzer import Analyzer
 from datetime import datetime
 from pprint import pprint
 
