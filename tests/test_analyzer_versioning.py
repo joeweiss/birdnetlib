@@ -27,7 +27,9 @@ def run_before_and_after_tests():
     clean_up_temp_installed_versions()
     # Restore main branch for BirdNET-Analyzer to origin/main.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
-    os.system(f"cd {birdnet_analyzer_path}; git clean -fd; git switch main; git status")
+    os.system(
+        f"cd {birdnet_analyzer_path}; git clean -fd; git checkout 98945574c68102ccfac6c3504fcc63e64ed6f9e3; git status"
+    )
 
 
 def clean_up_temp_installed_versions():

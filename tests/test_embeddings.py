@@ -10,6 +10,7 @@ from unittest.mock import patch
 import numpy as np
 
 
+@pytest.mark.omit_during_ghactions
 def test_embeddings():
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
@@ -68,6 +69,7 @@ def test_embeddings():
         )
 
 
+@pytest.mark.omit_during_ghactions
 def test_largefile_embeddings():
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
@@ -101,8 +103,6 @@ def test_largefile_embeddings():
     # pprint(commandline_results)
     assert len(commandline_results) == 40
 
-    # TODO: Implement for LargeRecording.
-    # Confirm that LargeRecording return not implemented.
     large_analyzer = LargeRecordingAnalyzer()
     recording = LargeRecording(
         large_analyzer,
@@ -113,6 +113,16 @@ def test_largefile_embeddings():
         min_conf=min_conf,
         return_all_detections=True,
     )
-    msg = "Extraction of embeddings is not yet implemented for LargeRecordingAnalyzer. Use Analyzer if possible."
-    with pytest.raises(NotImplementedError, match=msg):
-        recording.extract_embeddings()
+
+    recording.extract_embeddings()
+
+    # Check that birdnetlib results match command line results.
+    assert len(recording.embeddings) == 40
+    for idx, i in enumerate(commandline_results):
+        # Specify the tolerance level
+        tolerance = 1e-4  # 4 decimal points tolerance between BirdNET and birdnetlib.
+
+        # Assert that the arrays are almost equal within the tolerance
+        assert np.allclose(
+            i["embeddings"], recording.embeddings[idx]["embeddings"], atol=tolerance
+        )

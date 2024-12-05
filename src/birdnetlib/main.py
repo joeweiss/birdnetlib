@@ -73,12 +73,6 @@ class RecordingBase:
         self.analyzed = True
 
     def extract_embeddings(self):
-        # Check that analyzer is not LargeRecordingAnalyzer
-        if isinstance(self.analyzer, LargeRecordingAnalyzer):
-            raise IncompatibleAnalyzerError(
-                "LargeRecordingAnalyzer can only be used with the LargeRecording class"
-            )
-
         # Read and analyze.
         self.read_audio_data()
         self.analyzer.extract_embeddings_for_recording(self)
@@ -480,9 +474,9 @@ class LargeRecording(Recording):
         self.analyzed = True
 
     def extract_embeddings(self):
-        raise NotImplementedError(
-            "Extraction of embeddings is not yet implemented for LargeRecordingAnalyzer. Use Analyzer if possible."
-        )
+        self.analyzer.extract_embeddings_for_recording(self)
+        self.embeddings_list = self.analyzer.embeddings
+        self.embeddings_extracted = True
 
     def get_extract_array(self, start_sec, end_sec):
         # Returns ndarray trimmed for start_sec:end_sec
