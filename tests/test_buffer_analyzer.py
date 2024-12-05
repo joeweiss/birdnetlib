@@ -10,8 +10,10 @@ import csv
 from unittest.mock import patch
 import io
 
-def test_without_species_list():
+TEST_BN_COMMIT = "98945574c68102ccfac6c3504fcc63e64ed6f9e3"
 
+
+def test_without_species_list():
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -24,6 +26,9 @@ def test_without_species_list():
 
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
+    os.system(
+        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+    )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf} --rtype=csv"
     print(cmd)
@@ -50,10 +55,10 @@ def test_without_species_list():
 
     # pprint(commandline_results)
     assert len(commandline_results) > 0
-    with open(input_path,'rb') as f:
+    with open(input_path, "rb") as f:
         wav_buffer = f.read()
     bytes_buffer = io.BytesIO(wav_buffer)
-    for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+    for rate, buffer in wavutils.bufferwavs(bytes_buffer):
         analyzer = Analyzer()
         recording = RecordingBuffer(
             analyzer,
@@ -78,7 +83,6 @@ def test_without_species_list():
 
 
 def test_with_species_list_path():
-
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -95,6 +99,9 @@ def test_with_species_list_path():
 
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
+    os.system(
+        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+    )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --slist {custom_list_path} --rtype=csv"
     os.system(f"cd {birdnet_analyzer_path}; {cmd}")
@@ -120,10 +127,10 @@ def test_with_species_list_path():
 
     pprint(commandline_results)
     assert len(commandline_results) > 0
-    with open(input_path,'rb') as f:
+    with open(input_path, "rb") as f:
         wav_buffer = f.read()
     bytes_buffer = io.BytesIO(wav_buffer)
-    for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+    for rate, buffer in wavutils.bufferwavs(bytes_buffer):
         analyzer = Analyzer(custom_species_list_path=custom_list_path)
         recording = RecordingBuffer(
             analyzer,
@@ -139,7 +146,8 @@ def test_with_species_list_path():
         pprint(recording.detections)
 
         assert (
-            commandline_results[0]["common_name"] == recording.detections[0]["common_name"]
+            commandline_results[0]["common_name"]
+            == recording.detections[0]["common_name"]
         )
 
         commandline_birds = [i["common_name"] for i in commandline_results]
@@ -151,11 +159,11 @@ def test_with_species_list_path():
             len(analyzer.custom_species_list) == 41
         )  # Check that this matches the number printed by the cli version.
 
-    with open(input_path,'rb') as f:
+    with open(input_path, "rb") as f:
         wav_buffer = f.read()
     bytes_buffer = io.BytesIO(wav_buffer)
     # Run a recording without path and throw an error when used with custom species list.
-    for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+    for rate, buffer in wavutils.bufferwavs(bytes_buffer):
         with pytest.raises(ValueError):
             recording = RecordingBuffer(
                 analyzer,
@@ -170,7 +178,6 @@ def test_with_species_list_path():
 
 
 def test_with_species_list():
-
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
     lon = -120.7463
@@ -187,6 +194,9 @@ def test_with_species_list():
 
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
+    os.system(
+        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+    )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --slist {custom_list_path} --rtype=csv"
     os.system(f"cd {birdnet_analyzer_path}; {cmd}")
@@ -257,11 +267,11 @@ def test_with_species_list():
         "Zonotrichia albicollis_White-throated Sparrow",
     ]
 
-    with open(input_path,'rb') as f:
+    with open(input_path, "rb") as f:
         wav_buffer = f.read()
     bytes_buffer = io.BytesIO(wav_buffer)
     # Run a recording without path and throw an error when used with custom species list.
-    for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+    for rate, buffer in wavutils.bufferwavs(bytes_buffer):
         analyzer = Analyzer(custom_species_list=custom_species_list)
         recording = RecordingBuffer(
             analyzer,
@@ -277,7 +287,8 @@ def test_with_species_list():
         pprint(recording.detections)
 
         assert (
-            commandline_results[0]["common_name"] == recording.detections[0]["common_name"]
+            commandline_results[0]["common_name"]
+            == recording.detections[0]["common_name"]
         )
 
         commandline_birds = [i["common_name"] for i in commandline_results]
@@ -290,11 +301,11 @@ def test_with_species_list():
         )  # Check that this matches the number printed by the cli version.
 
     # Run a recording with lat/lon and throw an error when used with custom species list.
-    with open(input_path,'rb') as f:
+    with open(input_path, "rb") as f:
         wav_buffer = f.read()
     bytes_buffer = io.BytesIO(wav_buffer)
     # Run a recording without path and throw an error when used with custom species list.
-    for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+    for rate, buffer in wavutils.bufferwavs(bytes_buffer):
         with pytest.raises(ValueError):
             recording = RecordingBuffer(
                 analyzer,
@@ -309,7 +320,6 @@ def test_with_species_list():
 
 
 def test_species_list_calls():
-
     lon = -120.7463
     lat = 35.4244
     week_48 = 18
@@ -324,11 +334,11 @@ def test_species_list_calls():
         "return_predicted_species_list",
         wraps=analyzer.return_predicted_species_list,
     ) as wrapped_return_predicted_species_list:
-        with open(input_path,'rb') as f:
+        with open(input_path, "rb") as f:
             wav_buffer = f.read()
         bytes_buffer = io.BytesIO(wav_buffer)
         # Run a recording without path and throw an error when used with custom species list.
-        for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+        for rate, buffer in wavutils.bufferwavs(bytes_buffer):
             recording = RecordingBuffer(
                 analyzer,
                 buffer,
@@ -342,10 +352,10 @@ def test_species_list_calls():
             assert wrapped_return_predicted_species_list.call_count == 1
 
         # Second recording with the same position/time should not regerate the species list.
-        with open(input_path,'rb') as f:
+        with open(input_path, "rb") as f:
             wav_buffer = f.read()
         bytes_buffer = io.BytesIO(wav_buffer)
-        for rate,buffer in wavutils.bufferwavs(bytes_buffer):
+        for rate, buffer in wavutils.bufferwavs(bytes_buffer):
             recording = RecordingBuffer(
                 analyzer,
                 buffer,
