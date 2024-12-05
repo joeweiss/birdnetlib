@@ -27,7 +27,7 @@ def test_without_species_list():
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
     os.system(
-        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+        f"cd {birdnet_analyzer_path}; git clean -fd; git checkout {TEST_BN_COMMIT}; git status"
     )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --lat {lat} --lon {lon} --week {week_48} --min_conf {min_conf} --rtype=csv"
@@ -100,7 +100,7 @@ def test_with_species_list_path():
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
     os.system(
-        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+        f"cd {birdnet_analyzer_path}; git clean -fd; git checkout {TEST_BN_COMMIT}; git status"
     )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --slist {custom_list_path} --rtype=csv"
@@ -195,7 +195,7 @@ def test_with_species_list():
     # Process using python script as is.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
     os.system(
-        f"cd {birdnet_analyzer_path}; git clean -fd; git switch {TEST_BN_COMMIT}; git status"
+        f"cd {birdnet_analyzer_path}; git clean -fd; git checkout {TEST_BN_COMMIT}; git status"
     )
 
     cmd = f"python analyze.py --i '{input_path}' --o={output_path} --min_conf {min_conf} --slist {custom_list_path} --rtype=csv"
