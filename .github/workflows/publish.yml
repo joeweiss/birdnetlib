@@ -36,7 +36,7 @@ jobs:
       - name: Test with pytest
         run: |
           git -C tests/BirdNET-Analyzer checkout 98945574c68102ccfac6c3504fcc63e64ed6f9e3
-          pytest -m "not omit_during_ghactions"
+          pytest -m "not omit_during_ghactions" --maxfail=1
   deploy:
     runs-on: ubuntu-latest
     needs: [test]

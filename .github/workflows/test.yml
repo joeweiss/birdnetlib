@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        # python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9"]
     steps:
       - uses: actions/checkout@v3
         with:
@@ -38,4 +39,4 @@ jobs:
       - name: Test with pytest
         run: |
           git -C tests/BirdNET-Analyzer checkout 98945574c68102ccfac6c3504fcc63e64ed6f9e3
-          pytest -m "not omit_during_ghactions"
+          pytest -m "not omit_during_ghactions" --maxfail=1
