@@ -10,6 +10,7 @@ from unittest.mock import patch
 import numpy as np
 
 
+@pytest.mark.omit_during_ghactions
 def test_embeddings():
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
@@ -68,6 +69,7 @@ def test_embeddings():
         )
 
 
+@pytest.mark.omit_during_ghactions
 def test_largefile_embeddings():
     # Process file with command line utility, then process with python library and ensure equal commandline_results.
 
