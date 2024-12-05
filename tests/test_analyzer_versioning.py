@@ -28,7 +28,7 @@ def run_before_and_after_tests():
     # Restore main branch for BirdNET-Analyzer to origin/main.
     birdnet_analyzer_path = os.path.join(os.path.dirname(__file__), "BirdNET-Analyzer")
     os.system(
-        f"cd {birdnet_analyzer_path}; git clean -fd; git switch 9e23983b18ccfbcc75416e066ad889efe0563456; git status"
+        f"cd {birdnet_analyzer_path}; git clean -fd; git switch 98945574c68102ccfac6c3504fcc63e64ed6f9e3; git status"
     )
 
 

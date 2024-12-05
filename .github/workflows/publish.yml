@@ -35,7 +35,7 @@ jobs:
           # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
       - name: Test with pytest
         run: |
-          git -C tests/BirdNET-Analyzer checkout 9e23983b18ccfbcc75416e066ad889efe0563456
+          git -C tests/BirdNET-Analyzer checkout 98945574c68102ccfac6c3504fcc63e64ed6f9e3
           pytest -m "not omit_during_ghactions"
   deploy:
     runs-on: ubuntu-latest
