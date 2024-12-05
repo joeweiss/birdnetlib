@@ -568,3 +568,27 @@ class LargeRecordingAnalyzer(Analyzer):
 
         self.results = results
         recording.detection_list = self.detections
+
+    def extract_embeddings_for_recording(self, recording):
+        print("extract_embeddings_for_recording", recording.filename)
+        start = 0
+        end = recording.sample_secs
+        results = []
+        for segment in read_audio_segments(recording.path, sr=48000):
+            c = segment["segment"]
+            if len(c) < recording.sample_secs * 48000:
+                # If below the minimum segment duration, continue.
+                del c
+                continue
+            start = segment["start_sec"]
+            end = segment["end_sec"]
+
+            data = np.array([c], dtype="float32")
+            e = self._return_embeddings(data)[0].tolist()
+            results.append({"start_time": start, "end_time": end, "embeddings": e})
+
+            # Increment start and end
+            start += recording.sample_secs - recording.overlap
+            end = start + recording.sample_secs
+
+        self.embeddings = results
