@@ -68,6 +68,7 @@ class Analyzer:
         classifier_model_path=None,
         classifier_labels_path=None,
         version=None,
+        verbose=True,
     ):
         self.name = "Analyzer"
         self.model_name = "BirdNET-Analyzer"
@@ -100,6 +101,8 @@ class Analyzer:
         if self.version != MODEL_VERSION:
             # Download version dynamically if there's a match.
             self.check_for_model_files()
+
+        self.verbose = verbose
 
         self.classifier_model_path = classifier_model_path
         self.classifier_labels_path = classifier_labels_path
@@ -294,14 +297,16 @@ class Analyzer:
         week_48=None,
         filter_threshold=LOCATION_FILTER_THRESHOLD,
     ):
-        print("return_predicted_species_list")
+        if self.verbose:
+            print("return_predicted_species_list")
 
         return self.species_class.return_list_for_analyzer(
             lat=lat, lon=lon, week_48=week_48, threshold=filter_threshold
         )
 
     def set_predicted_species_list_from_position(self, recording):
-        print("set_predicted_species_list_from_position")
+        if self.verbose:
+            print("set_predicted_species_list_from_position")
 
         # Check to see if this species list has been previously cached.
         list_key = f"list-{recording.lon}-{recording.lat}-{recording.week_48}"
@@ -321,7 +326,8 @@ class Analyzer:
         self.cached_species_lists[list_key] = species_list
 
     def analyze_recording(self, recording):
-        print("analyze_recording", recording.filename)
+        if self.verbose:
+            print("analyze_recording", recording.filename)
 
         if self.has_custom_species_list and recording.lon and recording.lat:
             raise ValueError(
@@ -330,7 +336,8 @@ class Analyzer:
 
         # If recording has lon/lat, load cached list or predict a new species list.
         if recording.lon and recording.lat and self.classifier_model_path == None:
-            print("recording has lon/lat")
+            if self.verbose:
+                print("recording has lon/lat")
             self.set_predicted_species_list_from_position(recording)
 
         start = 0
@@ -364,7 +371,8 @@ class Analyzer:
         recording.detection_list = self.detections
 
     def extract_embeddings_for_recording(self, recording):
-        print("extract_embeddings_for_recording", recording.filename)
+        if self.verbose:
+            print("extract_embeddings_for_recording", recording.filename)
         start = 0
         end = recording.sample_secs
         results = []
