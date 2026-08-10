@@ -115,3 +115,54 @@ def test_default_analyzer():
     directory = "."
     watcher = DirectoryWatcher(directory)
     assert type(watcher.analyzers[0]).__name__ == "Analyzer"
+
+
+class StopWatching(Exception):
+    """Sentinel used to break out of watch()'s otherwise endless loop."""
+
+
+def run_watch_with_mocked_watchdog(watcher):
+    # watch() never returns on its own, so stop it at the observer's start()
+    # call, after every watchdog object has been constructed and wired up.
+    with patch("birdnetlib.watcher.PatternMatchingEventHandler") as handler_class:
+        with patch("birdnetlib.watcher.Observer") as observer_class:
+            observer_class.return_value.start.side_effect = StopWatching
+            with pytest.raises(StopWatching):
+                watcher.watch()
+    return handler_class, observer_class
+
+
+def test_watch_builds_event_handler_with_keyword_arguments():
+
+    # watchdog 5.0.0 made PatternMatchingEventHandler's arguments keyword-only,
+    # so passing them positionally is what pins birdnetlib to watchdog < 5.
+
+    watcher = DirectoryWatcher(".", analyzers=[Mock()])
+
+    handler_class, _ = run_watch_with_mocked_watchdog(watcher)
+
+    assert handler_class.call_count == 1
+    args, kwargs = handler_class.call_args
+    assert args == ()
+    assert kwargs == {
+        "patterns": ["*.mp3", "*.wav"],
+        "ignore_patterns": None,
+        "ignore_directories": False,
+        "case_sensitive": True,
+    }
+
+
+def test_watch_schedules_event_handler_with_recursive_by_keyword():
+
+    # The other half of watch()'s watchdog call surface.
+
+    directory = os.path.join(os.path.dirname(__file__), "test_files")
+    watcher = DirectoryWatcher(directory, analyzers=[Mock()])
+
+    handler_class, observer_class = run_watch_with_mocked_watchdog(watcher)
+
+    observer = observer_class.return_value
+    assert observer.schedule.call_count == 1
+    args, kwargs = observer.schedule.call_args
+    assert args == (handler_class.return_value, directory)
+    assert kwargs == {"recursive": True}

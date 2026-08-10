@@ -89,7 +89,10 @@ class DirectoryWatcher:
         ignore_directories = False
         case_sensitive = True
         my_event_handler = PatternMatchingEventHandler(
-            patterns, ignore_patterns, ignore_directories, case_sensitive
+            patterns=patterns,
+            ignore_patterns=ignore_patterns,
+            ignore_directories=ignore_directories,
+            case_sensitive=case_sensitive,
         )
         my_event_handler.on_closed = self._on_closed
         go_recursively = True
