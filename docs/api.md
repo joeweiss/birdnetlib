@@ -32,6 +32,7 @@ All recording classes can accept optional `lat`, `lon`, and `date` arguments, wh
 ```python
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
+from datetime import datetime
 
 analyzer = Analyzer()
 
@@ -53,6 +54,7 @@ It is also possible to annotate each detection — rather than filter — based 
 ```python
 from birdnetlib import Recording
 from birdnetlib.analyzer import Analyzer
+from datetime import datetime
 
 analyzer = Analyzer()
 
@@ -79,7 +81,7 @@ When using `return_all_detections=True`, `recording.detections` contains a list 
   'scientific_name': 'Porzana porzana',
   'start_time': 9.0,
   'is_predicted_for_location_and_date': False,
-  'label': 'Haemorhous mexicanus_House Finch'},
+  'label': 'Porzana porzana_Spotted Crake'},
  {'common_name': 'House Finch',
   'confidence': 0.4496,
   'end_time': 15.0,
@@ -124,7 +126,7 @@ with io.BytesIO(r.content) as fileObj:
     pprint(recording.detections)
 ```
 
-See [Download and analyzer an audio file from a URL](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_from_url.py) for a working implementation of `RecordingFileObject`.
+See [Download and analyze an audio file from a URL](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_from_url.py) for a working implementation of `RecordingFileObject`.
 
 ### RecordingBuffer
 
@@ -145,11 +147,11 @@ To use a specific version of BirdNET-Analyzer model, pass the version to the `An
 analyzer = Analyzer(version="2.3")
 ```
 
-Note: `birdnetlib` is compatible with BirdNET-Analyzer model versions 2.1 and higher. For more information on specific versions of BirdNET-Analyzer, see their [model version history](https://github.com/kahst/BirdNET-Analyzer/tree/main/checkpoints).
+Note: `birdnetlib` is compatible with BirdNET-Analyzer model versions 2.1 and higher. For more information on specific versions of BirdNET-Analyzer, see their [model version history](https://birdnet-team.github.io/BirdNET-Analyzer/stable/models.html).
 
 #### Using a custom classifier with BirdNET-Analyzer
 
-To use a [model trained with BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#training), pass your labels and model path to the `Analyzer` class.
+To use a [model trained with BirdNET-Analyzer](https://birdnet-team.github.io/BirdNET-Analyzer/stable/best-practices/training.html), pass your labels and model path to the `Analyzer` class.
 
 ```python
 from birdnetlib import Recording
@@ -177,7 +179,7 @@ print(recording.detections)
 
 To use the legacy BirdNET-Lite model, use the `LiteAnalyzer` class.
 
-Note: The BirdNET-Lite project has been [deprecated](https://github.com/kahst/BirdNET-Lite). The BirdNET-Lite model is no longer included in the PyPi `birdnetlib` package. This model and label file will be downloaded and installed the first time the `LiteAnalyzer` is initialized in your Python environment.
+Note: The BirdNET-Lite project has been [deprecated](https://github.com/birdnet-team/BirdNET-Lite). The BirdNET-Lite model is no longer included in the PyPi `birdnetlib` package. This model and label file will be downloaded and installed the first time the `LiteAnalyzer` is initialized in your Python environment.
 
 ```python
 from birdnetlib import Recording
