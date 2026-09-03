@@ -9,11 +9,11 @@ hide:
 
 Supports audio extractions as .flac, .wav and .mp3. Spectrograms exported as .png, .jpg, or other matplotlib.pyplot supported formats. Can be filtered to only extract files above a separate minimum confidence value.
 
-[Download and analyzer an audio file from a URL](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_from_url.py)
+[Download and analyze an audio file from a URL](https://github.com/joeweiss/birdnetlib/blob/main/examples/analyze_from_url.py)
 
 [Analyze an entire directory](https://github.com/joeweiss/birdnetlib/blob/main/examples/batch_directory.py)
 
-[Analyze an entire directory with multithreading support](https://github.com/joeweiss/birdnetlib/blob/main/examples/batch_multiprocessing_directory.py)
+[Analyze an entire directory with multiprocessing support](https://github.com/joeweiss/birdnetlib/blob/main/examples/batch_multiprocessing_directory.py)
 
 [Watch a directory and analyze files as they are added](https://github.com/joeweiss/birdnetlib/blob/main/examples/watch_directory.py)
 

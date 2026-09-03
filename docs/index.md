@@ -13,7 +13,7 @@ A python api for BirdNET-Analyzer and BirdNET-Lite
 
 ## Installation
 
-`birdnetlib` requires Python 3.9+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer#setup-ubuntu) for more details on installing the Tensorflow-related dependencies.
+`birdnetlib` requires Python 3.9+ and prior installation of Tensorflow Lite, librosa and ffmpeg. See [BirdNET-Analyzer](https://birdnet-team.github.io/BirdNET-Analyzer/stable/installation.html) for more details on installing the Tensorflow-related dependencies.
 
 ```bash
 pip install birdnetlib
@@ -21,7 +21,7 @@ pip install birdnetlib
 
 ## Documentation
 
-`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite.
+`birdnetlib` provides a common interface for BirdNET-Analyzer and BirdNET-Lite. The BirdNET models identify bird species by sound — they analyze audio recordings, not images.
 
 ### Using BirdNET-Analyzer
 
@@ -68,15 +68,15 @@ The `Recording` class takes a file path as an argument. You can also use `Record
 
 ## About BirdNET-Analyzer
 
-`birdnetlib` uses models provided by BirdNET-Analyzer and BirdNET-Lite under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/kahst/BirdNET-Analyzer/blob/main/LICENSE).
+`birdnetlib` uses models provided by BirdNET-Analyzer and BirdNET-Lite under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License](https://github.com/birdnet-team/BirdNET-Analyzer/blob/main/LICENSE).
 
 BirdNET-Analyzer and BirdNET-Lite were developed by the [K. Lisa Yang Center for Conservation Bioacoustics](https://www.birds.cornell.edu/ccb/) at the [Cornell Lab of Ornithology](https://www.birds.cornell.edu/home).
 
 For more information on BirdNET analyzers, please see the project repositories below:
 
-[BirdNET-Analyzer](https://github.com/kahst/BirdNET-Analyzer)
+[BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)
 
-[BirdNET-Lite](https://github.com/kahst/BirdNET-Lite)
+[BirdNET-Lite](https://github.com/birdnet-team/BirdNET-Lite)
 
 `birdnetlib` is not associated with BirdNET-Lite, BirdNET-Analyzer or the K. Lisa Yang Center for Conservation Bioacoustics.
 
